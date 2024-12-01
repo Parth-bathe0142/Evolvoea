@@ -1,15 +1,19 @@
 const express = require("express")
 const path = require("path")
 
-const app = express()
 const port = 4000
+const app = express()
 
-app.get("/test", (req, res) => {
+app.use('/styles', express.static(path.join(__dirname, 'dist/styles')))
+app.use('/script', express.static(path.join(__dirname, 'dist/script')))
+app.use('/assets', express.static(path.join(__dirname, 'dist/assets')))
+
+app.get("/test", (_, res) => {
     res.json({ result: "success" })
 })
 
-app.get("/home", (req, res) => {
-    const filePath = path.join(__dirname, "/dist/html/index.html")
+app.get("/home", (_, res) => {
+    const filePath = path.join(__dirname, "/dist/index.html")
     res.sendFile(filePath, (err) => {
         if (err) {
             console.error("File sending error:", err.message)
