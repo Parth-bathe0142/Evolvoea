@@ -4,8 +4,17 @@ body {
     padding: 0px;
 }
 
+#game-container {
+    border: solid white 2px;
+    width: 812px;
+    height: 462px;
+    margin: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 canvas#game-canvas {
-    border: solid white 4px;
-    margin: 6px;
     image-rendering: pixelated;
+    transform: scale(2);
 }
