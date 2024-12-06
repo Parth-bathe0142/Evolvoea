@@ -1,5 +1,5 @@
-import { GameObjectConfig } from "../../basic/GameObject.js";
-import { MovableObjectGrid } from "../../basic/MovableObject.js";
+import { GameObjectConfig } from "../basic/GameObject.js";
+import { MovableObjectGrid } from "../basic/MovableObject.js";
 
 export interface PersonConfig extends GameObjectConfig {
     name: string

@@ -64,10 +64,11 @@ export class Sprite {
     draw(ctx: CanvasRenderingContext2D) { // function return types are always optional
         if(this.imgLoaded) {
             const drawPos = this.gameObject.drawPos
+            const frame = this.frame // calling get method as if it is a property
+
             const dx = drawPos.x + this.imgOffset.x
             const dy = drawPos.y + this.imgOffset.y
 
-            const frame = this.frame // calling get method as if it is a property
             const sx = frame.frame.x * this.cropSize
             const sy = frame.frame.y * this.cropSize
 

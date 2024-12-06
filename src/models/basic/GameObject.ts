@@ -2,9 +2,12 @@ import { Coord } from "./misc.js"
 import { Sprite, SpriteConfig } from "./Sprite.js"
 
 
-// constructor parameters
+/**
+ * @param drawPos Optional, starting position of the object on the grid
+ * @param spriteConfig The sprite corresponding to this game object
+ */
 export interface GameObjectConfig {
-    gridPos?: Coord,
+    drawPos?: Coord,
     spriteConfig: SpriteConfig 
 }
 
@@ -12,13 +15,11 @@ export interface GameObjectConfig {
 export abstract class GameObject {
 
     //instance variables
-    gridPos: Coord = { x: 0, y: 0 }
     drawPos: Coord = { x: 0, y: 0 }
     sprite: Sprite
 
     constructor(config: GameObjectConfig) {
-        this.gridPos = config.gridPos || this.gridPos
-        this.drawPos = { x: this.gridPos.x * 16, y: this.gridPos.y * 16 }
+        this.drawPos = config.drawPos || { x: 0, y: 0 }
 
         // definitely assigning a value to an optional param, ! can be used later in Sprite constructor
         // to claim that a value definitely exists and is not undefined

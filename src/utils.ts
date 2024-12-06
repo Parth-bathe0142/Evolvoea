@@ -17,6 +17,14 @@ export const utils = {
         return { x, y };
     },
 
+    GridToDraw(coord: Coord): Coord {
+        return { x: coord.x * 16, y: coord.y * 16 }
+    },
+    
+    DrawToGrid(coord: Coord) {
+        return { x: Math.floor(coord.x / 16), y: Math.floor(coord.y / 16) }
+    },
+
     getDistance(from: Coord, to: Coord): number {
         const dx = to.x - from.x;
         const dy = to.y - from.y;
