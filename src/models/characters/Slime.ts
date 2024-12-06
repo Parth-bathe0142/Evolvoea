@@ -29,5 +29,6 @@ export abstract class Slime extends MovableObjectFree {
         this.speed = config.speed
     }
 
-    abstract decision(): void;
+    abstract decision(): void
+    abstract attack(): void
 }

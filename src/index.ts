@@ -1,4 +1,6 @@
 import { MovableObjectFree } from "./models/basic/MovableObject.js"
+import { utils } from "./utils.js"
+import { Time } from "./Time.js"
 
 // HTML Element that supports drawing custom images
 const canvas = document.querySelector("canvas#game-canvas") as HTMLCanvasElement
@@ -8,7 +10,7 @@ const ctx = canvas.getContext("2d")!
 
 // example of creating an object using configs, skipping some optional parameters
 const object = new MovableObjectFree({
-    drawPos: { x: 12, y: 7},
+    drawPos: utils.GridToDraw({ x: 12, y: 7}),
     speed: 1,
     spriteConfig: {
         src: "assets/spritesheets/character.png",
@@ -33,10 +35,14 @@ const object = new MovableObjectFree({
         currentAnim: "walk-down"
     }
 })
-setInterval(() => {
-    ctx.clearRect(0,0, canvas.width, canvas.height)
+function update() {
     object.update()
+}
+function render() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     object.sprite.draw(ctx)
-}, 20)
+}
 
-setTimeout(() => object.moveTowards({ x: 16, y: 3}, "grid"), 5000);
+const time = new Time(48)
+const { pause, play } = time.runLoop(update, render)
+

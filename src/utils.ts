@@ -21,7 +21,7 @@ export const utils = {
         return { x: coord.x * 16, y: coord.y * 16 }
     },
     
-    DrawToGrid(coord: Coord) {
+    DrawToGrid(coord: Coord): Coord {
         return { x: Math.floor(coord.x / 16), y: Math.floor(coord.y / 16) }
     },
 
@@ -30,16 +30,5 @@ export const utils = {
         const dy = to.y - from.y;
 
         return Math.sqrt(dx * dx + dy * dy);
-    }
-}
-
-
-export const time = {
-    async delay(seconds: number): Promise<void> {
-        if(seconds < 0) throw new Error("negative delay demanded")
-    
-        return new Promise<void>((resolve) => {
-            setTimeout(resolve, seconds * 1000)
-        })
     }
 }
