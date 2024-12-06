@@ -17,7 +17,7 @@ icon.onload = () => {
 
 // example of creating an object using configs, skipping some optional parameters
 const object = new MovableObjectGrid({
-    gridPos: { x: 12, y: 7},
+    gridPos: { x: 12, y: 5},
     spriteConfig: {
         src: "assets/spritesheets/character.png",
         cropSize: 48,
