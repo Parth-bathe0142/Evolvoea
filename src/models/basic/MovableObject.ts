@@ -3,7 +3,13 @@ import { GameObject, GameObjectConfig } from "./GameObject.js";
 import { Coord } from "./misc.js";
 
 type GridDirs = "up" | "right" | "down" | "left" | "none"
-
+/**
+ * Represents objects that can move in the world, following
+ * the fixed positions of cells in a grid. movement is smooth
+ * but starts and ends only at discrete cells.
+ * Movement restrictions are to be implemented as "wall" cells
+ * that cannot be walked into
+ */
 export class MovableObjectGrid extends GameObject { 
     gridPos: Coord  
     steps = 0
@@ -15,6 +21,13 @@ export class MovableObjectGrid extends GameObject {
         this.gridPos = config.gridPos || { x: 0, y: 0 }
     }
 
+    /** 
+     * if object is currently moving, updates its drawPos till
+     * it reaches its destination, then updates the grid pos.
+     * effectively this object can block the cell it is in as 
+     * well as the cell it is currently moving to, making
+     * collisions impossible
+     */
     update(): void {
         super.update()
 
@@ -44,7 +57,11 @@ export class MovableObjectGrid extends GameObject {
             }
         }
     }
-
+    /**
+     * Starts the movement behavior. Does NOT make any
+     * updates to the sprite of this object
+     * @param to direction of intended movement
+     */
     makeMove(to: GridDirs) {
         if(this.direction == "none" && this.steps == 0) {
             this.direction = to
@@ -67,7 +84,14 @@ export class MovableObjectGrid extends GameObject {
     }
 }
 
-
+/**
+ * Represents objects that can move freely without the
+ * confines of the grid and its cells. Intended for 
+ * objects one the battleground such as slimes or projectiles
+ * This implementation works by accepting destination 
+ * coords and moving the object to it.
+ * @todo Implement movement restrictions
+ */
 export class MovableObjectFree extends GameObject {
     moving: boolean = false
     speed: number
@@ -79,6 +103,13 @@ export class MovableObjectFree extends GameObject {
         this.speed = config.speed
     }
 
+    /**
+     * Updates drawPos and moves it towards destination
+     * at given speed. Stops within 5 points distance of
+     * destination in order to avoid rounding errors but
+     * this may fail for higher speeds that cross more than 
+     * 5 points per step
+     */
     update() {
         super.update()
         
@@ -95,6 +126,11 @@ export class MovableObjectFree extends GameObject {
         }
     }
 
+    /**
+     * Starts the movement behavior by providing a
+     * destination to move to, in free space by default
+     * but can snap to the grid as well
+     */
     moveTowards(to: Coord, on: "grid" | "free" = "free") {
         if(on == "grid") {
             to = utils.GridToDraw(to)
@@ -104,6 +140,13 @@ export class MovableObjectFree extends GameObject {
         this.targetPos = to
     }
 
+    /**
+     * Terminates the movement behavior, can also
+     * interrupt it if called explicitly. Converts
+     * drawPos coord to rounded numbers, otherwise
+     * sprites can take a blurry appearance caused
+     * by floating point coords
+     */
     stop() {
         this.moving = false
         this.targetPos = null

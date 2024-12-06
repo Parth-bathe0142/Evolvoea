@@ -11,23 +11,26 @@ export interface GameObjectConfig {
     spriteConfig: SpriteConfig 
 }
 
-// exported items can be used in other files
+/**
+ * The root class for all ingame entities. Contains
+ * only sprite and draw position information
+ */
 export abstract class GameObject {
 
-    //instance variables
     drawPos: Coord = { x: 0, y: 0 }
     sprite: Sprite
 
     constructor(config: GameObjectConfig) {
         this.drawPos = config.drawPos || { x: 0, y: 0 }
 
-        // definitely assigning a value to an optional param, ! can be used later in Sprite constructor
-        // to claim that a value definitely exists and is not undefined
-        config.spriteConfig.gameObject = this 
+        config.spriteConfig.gameObject = this
         this.sprite = new Sprite(config.spriteConfig)
     }
-
+    /**
+     * only updates the sprite if it is animated, 
+     * otherwise does nothing
+     */
     update(): void {
-        this.sprite.updateSprite()
+        this.sprite.isAnimated && this.sprite.updateSprite()
     }
 }

@@ -1,6 +1,11 @@
 import { Coord } from "./models/basic/misc.js";
 
+/**
+ * contains utility functions for use throughout
+ * the program
+ */
 export const utils = {
+    /** @return the unit direction from "from" to "to" */
     getUnitVector(from: Coord, to: Coord): Coord {
         const dx = to.x - from.x;
         const dy = to.y - from.y;
@@ -17,14 +22,17 @@ export const utils = {
         return { x, y };
     },
 
+    /** Converts a grid based coord to a free coord */
     GridToDraw(coord: Coord): Coord {
         return { x: coord.x * 16, y: coord.y * 16 }
     },
     
+    /** Converts a free coord to a grid based coord */
     DrawToGrid(coord: Coord): Coord {
         return { x: Math.floor(coord.x / 16), y: Math.floor(coord.y / 16) }
     },
 
+    /** @returns the euclidean distance between two coords */
     getDistance(from: Coord, to: Coord): number {
         const dx = to.x - from.x;
         const dy = to.y - from.y;

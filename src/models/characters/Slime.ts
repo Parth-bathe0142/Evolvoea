@@ -9,10 +9,16 @@ export interface SlimeConfig extends GameObjectConfig {
     speed: number
 }
 
+/**
+ * A generic abstract slime that makes no decisions.
+ * Only a base for proper slimes. These are meant to 
+ * be on the battleground with free movement. NPCs on
+ * the grid can be made with the Person class
+ */
 export abstract class Slime extends MovableObjectFree {
     type: string
-    maxHealth: number
-    health: number
+    maxHealth: number // the whole health
+    health: number // the current health
     damage: number
     speed: number
 
@@ -31,4 +37,5 @@ export abstract class Slime extends MovableObjectFree {
 
     abstract decision(): void
     abstract attack(): void
+    abstract takeDamage(): void
 }

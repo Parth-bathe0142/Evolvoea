@@ -44,5 +44,6 @@ function render() {
 }
 
 const time = new Time(48)
-const { pause, play } = time.runLoop(update, render)
+const { pause, play } = time.runLoop(update, render)!
+Time.Test()
 
