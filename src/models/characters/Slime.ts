@@ -9,12 +9,15 @@ export interface SlimeConfig extends GameObjectConfig {
     speed: number
 }
 
-export class Slime extends MovableObjectFree {
+export abstract class Slime extends MovableObjectFree {
     type: string
     maxHealth: number
     health: number
     damage: number
     speed: number
+
+    targetEnemy: Slime | null = null
+    currentAction: "idle" | "attack" | "flee" | "" = "idle"
 
     constructor(config: SlimeConfig) {
         super(config)
@@ -25,4 +28,6 @@ export class Slime extends MovableObjectFree {
         this.damage = config.damage
         this.speed = config.speed
     }
+
+    abstract decision(): void;
 }
