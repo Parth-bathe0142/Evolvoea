@@ -10,7 +10,7 @@ const ctx = canvas.getContext("2d")!
 
 // example of creating an object using configs, skipping some optional parameters
 const object = new MovableObjectFree({
-    drawPos: utils.GridToDraw({ x: 12, y: 7}),
+    drawPos: utils.GridToDraw({ x: 11, y: 7}),
     speed: 1,
     spriteConfig: {
         src: "assets/spritesheets/character.png",
