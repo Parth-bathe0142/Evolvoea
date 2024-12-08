@@ -1,5 +1,5 @@
 import { GameObject } from "./GameObject.js"
-import { AnimFrame, Coord, CROP_SIZE, DEFAULT_ANIM_DURATION, DRAW_SIZE } from "./misc.js"
+import { AnimFrame, Coord, CROP_SIZE, DEFAULT_ANIM_DURATION, DRAW_SIZE, GameState } from "./misc.js"
 
 
 // constructor parameters
@@ -15,7 +15,7 @@ export interface SpriteConfig {
 }
 
 export class Sprite {
-    img = new Image()
+    img: HTMLImageElement | null = null
     cropSize: number
     drawSize: number
     imgOffset = { x: 0, y: 0 }
@@ -35,9 +35,12 @@ export class Sprite {
     constructor(config: SpriteConfig) {
         this.gameObject = config.gameObject!
 
-        this.img.src = config.src
-        this.img.onload = () => this.imgLoaded = true
-        this.imgOffset = config.imgOffset || this.imgOffset
+        if (config.src != "") {
+            this.img = new Image()
+            this.img.src = config.src
+            this.img.onload = () => this.imgLoaded = true
+            this.imgOffset = config.imgOffset || this.imgOffset
+        }
 
         this.cropSize = config.cropSize || CROP_SIZE
         this.drawSize = config.drawSize || DRAW_SIZE
@@ -63,20 +66,26 @@ export class Sprite {
     }
 
 
-    draw(ctx: CanvasRenderingContext2D) { // function return types are always optional
+    draw(ctx: CanvasRenderingContext2D, state: GameState) { // function return types are always optional
         if(this.imgLoaded) {
             const drawPos = this.gameObject.drawPos
             const frame = this.frame // calling get method as if it is a property
 
-            const dx = drawPos.x + this.imgOffset.x + (frame.offset?.x || 0)
-            const dy = drawPos.y + this.imgOffset.y + (frame.offset?.x || 0)
+            let dx = drawPos.x + this.imgOffset.x + (frame.offset?.x || 0)
+            let dy = drawPos.y + this.imgOffset.y + (frame.offset?.x || 0)
+
+            if(state.camera) {
+                const cameraOffset = state.camera.offset
+                dx += cameraOffset.x
+                dy += cameraOffset.y
+            }
 
             const sx = frame.frame.x * this.cropSize
             const sy = frame.frame.y * this.cropSize
 
             // draws one cropped part of the image at the location of the game object
             ctx.drawImage(
-                this.img,                           // image to draw from
+                this.img!,                           // image to draw from
                 sx, sy,                             // crop top left
                 this.cropSize, this.cropSize,       // crop width and height
                 dx, dy,                             // draw top left

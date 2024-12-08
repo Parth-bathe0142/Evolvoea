@@ -1,5 +1,6 @@
 // very small and universal definitions are kept in a seperate file
 
+import { Camera } from "./Camera"
 
 /**
  * Used to represent a position on the canvas or in the grid.
@@ -10,7 +11,6 @@ export interface Coord {
     x: number
     y: number
 }
-
 
 /**
  * Represents one frame in an animation.
@@ -28,6 +28,9 @@ export interface AnimFrame {
     duration?: number
 }
 
+export interface GameState {
+    camera?: Camera
+}
 
 /** Default assumed size of each sprite in any spritesheet, there will be several exceptions */
 export const CROP_SIZE = 16

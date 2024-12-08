@@ -16,9 +16,10 @@ export class MovableObjectGrid extends GameObject {
     direction: GridDirs = "none"
     movingTo: Coord | null = null
 
-    constructor(config: GameObjectConfig & { gridPos?: Coord}) {
+    constructor(config: GameObjectConfig & { gridPos?: Coord }) {
         super(config)
         this.gridPos = config.gridPos || { x: 0, y: 0 }
+        this.drawPos = utils.GridToDraw(this.gridPos)
     }
 
     /** 
@@ -84,10 +85,16 @@ export class MovableObjectGrid extends GameObject {
     }
 }
 
+
+export interface MovableObjectFreeConfig extends GameObjectConfig {
+    speed: number
+    precision?: number
+}
+
 /**
  * Represents objects that can move freely without the
  * confines of the grid and its cells. Intended for 
- * objects one the battleground such as slimes or projectiles
+ * objects on the battleground such as slimes or projectiles
  * This implementation works by accepting destination 
  * coords and moving the object to it.
  * @todo Implement movement restrictions
@@ -95,12 +102,14 @@ export class MovableObjectGrid extends GameObject {
 export class MovableObjectFree extends GameObject {
     moving: boolean = false
     speed: number
+    precision?: number
     direction = { x: 0, y: 0 }
     targetPos: Coord | null = null
 
-    constructor(config: GameObjectConfig & { speed: number }) {
+    constructor(config: MovableObjectFreeConfig) {
         super(config)
         this.speed = config.speed
+        this.precision = config.precision
     }
 
     /**
@@ -114,15 +123,15 @@ export class MovableObjectFree extends GameObject {
         super.update()
         
         if(this.moving) {
+            if(utils.getDistance(this.drawPos, this.targetPos!) < (this.precision ?? 5)) {
+                this.stop()
+            }
             let dx = this.direction.x * this.speed
             let dy = this.direction.y * this.speed
 
             this.drawPos.x += dx
             this.drawPos.y += dy
 
-            if(utils.getDistance(this.drawPos, this.targetPos!) < 5) {
-                this.stop()
-            }
         }
     }
 
