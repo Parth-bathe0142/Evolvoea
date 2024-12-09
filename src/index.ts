@@ -67,9 +67,7 @@ function update() {
     object2.update()
 }
 function render() {
-    const gameState = {
-        camera
-    }
+    const gameState = { camera, time }
     ctx.clearRect(0, 0, canvas.width, canvas.height)
     object.sprite.draw(ctx, gameState)
     object2.sprite.draw(ctx, gameState)
@@ -78,7 +76,7 @@ function render() {
 const time = new Time(48)
 const { pause, play } = time.runLoop(update, render)!
 
-await time.delay(4 * 48)
+await time.delay(4)
 object.makeMove("down")
-await time.delay(4 * 48)
+await time.delay(4)
 object.makeMove("left")

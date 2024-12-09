@@ -1,5 +1,6 @@
 // very small and universal definitions are kept in a seperate file
 
+import { Time } from "../../Time"
 import { Camera } from "./Camera"
 
 /**
@@ -30,6 +31,7 @@ export interface AnimFrame {
 
 export interface GameState {
     camera?: Camera
+    time: Time
 }
 
 /** Default assumed size of each sprite in any spritesheet, there will be several exceptions */

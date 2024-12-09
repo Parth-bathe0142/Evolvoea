@@ -2,13 +2,20 @@
  * The class that manages all time related tasks in the game.
  */
 export class Time {
-    private timeStep = 1000 / 60;    // duration of one frame in milliseconds
-    private now = 0;                 // current time
-    private passed = 0;              // time since last frame
-    private initialised = false;     // has the loop started? one time can only be initialised once
+    private timeStep = 1000 / 60 // duration of one frame in milliseconds
+    private now = 0 // current time
+    private passed = 0 // time since last frame
+    private initialised = false // has the loop started? one time can only be initialised once
+    private _currentFrame = 0 // sort of frame count 
 
-    private _currentFrame = 0;       // sort of frame count 
-    FPS = 60;                        // FPS
+    /**
+     * holds resolves of delays set with reference to frames.
+     * this is to avoid using timeouts as the do not work 
+     * accross pauses in game
+     */
+    private schedules = new Map< number, [() => void] >()
+
+    FPS = 60
 
     get currentFrame() {             // can be used for scheduling tasks
         return this._currentFrame
@@ -49,17 +56,21 @@ export class Time {
         // the internal loop function
         const play = (timestamp: number) => {
             if (!paused) {
-                const deltaTime = timestamp - this.now;
+                this.passed += timestamp - this.now;
                 this.now = timestamp;
 
-                this.passed += deltaTime;
                 while (this.passed > this.timeStep) {
-                    this.passed -= this.timeStep;
-                    this._currentFrame++;
+                    this.passed -= this.timeStep
+                    this._currentFrame++
                     update(this);
-                    render && render(this);
+
+                    // resolve all promises set on this frame and then remove that schedule
+                    this.schedules.get(this.currentFrame)?.forEach(r => r())
+                    this.schedules.delete(this.currentFrame)
+                    
+                    render && render(this)
                 }
-                requestAnimationFrame(play);
+                requestAnimationFrame(play)
             }
         };
         requestAnimationFrame(play);
@@ -68,9 +79,10 @@ export class Time {
             pause: () => { paused = true },
 
             play: () => {
-                paused = false;
-                this.now = performance.now();
-                play(0);
+                if(paused = false) return
+                paused = false
+                this.now = performance.now()
+                play(0)
             },
         };
     }
@@ -82,26 +94,29 @@ export class Time {
      * RAF loops causing severe performance issues
      */
     rewind() {
+        if(this.schedules.size > 0) {
+            throw new Error("Attempt to rewind while delays are set")
+        }
         this._currentFrame = 0
+    }
+
+    private addToSchedule(frame: number, resolve: ()=>void) {
+        if(this.schedules.has(frame)) {
+            this.schedules.get(frame)?.push(resolve)
+        } else {
+            this.schedules.set(frame, [resolve])
+        }
     }
 
     /**
      * Creates a promise that resolves after X frames
-     * @issue if the game is paused, all delays will start
-     * RAF loops and cause performance issues
-     * @todo Implement event handling to to fix issue
      */
-    async delay(frames: number): Promise<void> {
-        if (frames < 0) throw new Error("negative delay demanded");
-        const targetFrame = this._currentFrame + frames;
+    async delay(timeout: number, unit: "frame" | "second" = "second"): Promise<void> {
+        if (timeout < 0) throw new Error("negative delay demanded")
+
+        const targetFrame = this._currentFrame + timeout * (unit == "second" ? this.FPS : 1)
         return new Promise<void>((resolve) => {
-            const check = () => {
-                if (this._currentFrame >= targetFrame) {
-                    return resolve();
-                }
-                requestAnimationFrame(check);
-            };
-            setTimeout(() => requestAnimationFrame(check), (frames - 2) * this.timeStep);
+            this.addToSchedule(targetFrame, resolve)
         });
     }
 
