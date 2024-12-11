@@ -31,7 +31,7 @@ export class Sprite {
         })
     }
 
-    static removeImage(src: string) {
+    private static removeImage(src: string) {
         if(this.imageCache.has(src)) {
             let entry = this.imageCache.get(src)!
             entry.count--
@@ -41,6 +41,7 @@ export class Sprite {
         }
     }
 
+    src: string
     img: HTMLImageElement | null = null
     spritePadding = { width: 0, height: 0 }
     cropSize: BoundingBox
@@ -62,11 +63,13 @@ export class Sprite {
     constructor(config: SpriteConfig) {
         this.gameObject = config.gameObject!
 
-        if (config.src != "") {
-            Sprite.addImage(config.src).then(img => {
-                this.img = img
-                this.imgLoaded = true
-            })
+        this.src = config.src
+        if (this.src != "") {
+            Sprite.addImage(config.src)
+              .then(img => {
+                  this.img = img
+                  this.imgLoaded = true
+              })
             this.drawOffset = config.drawOffset ?? this.drawOffset
         }
 
@@ -90,6 +93,12 @@ export class Sprite {
             this.currentAnimFrame %= this.animations[this.currentAnim].length
             
             this.animProgress = this.frame.duration ?? DEFAULT_ANIM_DURATION
+        }
+    }
+
+    destroy() {
+        if(this.img) {
+            Sprite.removeImage(this.src)
         }
     }
 

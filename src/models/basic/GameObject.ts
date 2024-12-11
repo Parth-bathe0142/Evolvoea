@@ -33,4 +33,8 @@ export abstract class GameObject {
     update(): void {
         this.sprite.isAnimated && this.sprite.updateSprite()
     }
+
+    destroy() {
+        this.sprite.destroy()
+    }
 }
