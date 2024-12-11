@@ -1,4 +1,4 @@
-import { Coord, GameState } from "../models/basic/misc";
+import { Coord, GameState } from "../models/core/misc";
 import { Tile } from "./Tile";
 
 /**

@@ -1,4 +1,5 @@
-import { Coord } from "./models/basic/misc.js";
+import { Coord, FreeCollider } from "./misc.js";
+import { MovableObjectFree } from "./MovableObject.js";
 
 /**
  * contains utility functions for use throughout
@@ -38,5 +39,14 @@ export const utils = {
         const dy = to.y - from.y;
 
         return Math.sqrt(dx * dx + dy * dy);
+    },
+
+    checkCollision(
+        object1: FreeCollider,
+        object2: FreeCollider,
+    ): boolean {
+        let dist = this.getDistance(object1.drawPos, object2.drawPos)
+
+        return dist <= (object1.radius + object2.radius)
     }
 }

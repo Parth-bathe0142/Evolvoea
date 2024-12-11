@@ -1,7 +1,6 @@
-import { MovableObjectFree, MovableObjectGrid } from "./models/basic/MovableObject.js"
-import { utils } from "./utils.js"
-import { Time } from "./Time.js"
-import { Camera } from "./models/basic/Camera.js"
+import { MovableObjectGrid } from "./models/core/MovableObject.js"
+import { Time } from "./models/core/Time.js"
+import { Camera } from "./models/core/Camera.js"
 
 // HTML Element that supports drawing custom images
 const canvas = document.querySelector("canvas#game-canvas") as HTMLCanvasElement
@@ -14,9 +13,9 @@ const object = new MovableObjectGrid({
     gridPos: { x: 12, y: 7},
     spriteConfig: {
         src: "assets/spritesheets/character.png",
-        cropSize: 48,
-        drawSize: 48,
-        imgOffset: { x: -24, y: -24 },
+        cropSize: { width: 48, height: 48 },
+        drawSize: { width: 48, height: 48 },
+        drawOffset: { x: -24, y: -24 },
         animations: {
             "idle-down": [
                 { frame: { x: 0, y: 0 } }
@@ -54,9 +53,9 @@ const object2 = new MovableObjectGrid({
     gridPos: { x: 10, y: 5},
     spriteConfig: {
         src: "assets/spritesheets/character.png",
-        cropSize: 48,
-        drawSize: 48,
-        imgOffset: { x: -24, y: -24 },
+        cropSize: { width: 48, height: 48 },
+        drawSize: { width: 48, height: 48 },
+        drawOffset: { x: -24, y: -24 },
         isAnimated: false
     }
 })
@@ -75,6 +74,10 @@ function render() {
 
 const time = new Time(48)
 const { pause, play } = time.runLoop(update, render)!
+
+fetch("assets/maps/example_map/map.json")
+  .then(res => res.json())
+  .then(json => console.log(json.mapHeight))
 
 await time.delay(4)
 object.makeMove("down")

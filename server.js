@@ -4,9 +4,7 @@ const path = require("path")
 const port = 4000
 const app = express()
 
-app.use('/styles', express.static(path.join(__dirname, 'dist/styles')))
-app.use('/script', express.static(path.join(__dirname, 'dist/script')))
-app.use('/assets', express.static(path.join(__dirname, 'dist/assets')))
+app.use('/', express.static(path.join(__dirname, 'dist')))
 
 app.get("/test", (_, res) => {
     res.json({ result: "success" })

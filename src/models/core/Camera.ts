@@ -1,8 +1,6 @@
-import { utils } from "../../utils.js";
+import { utils } from "./utils.js";
 import { GameObject, GameObjectConfig } from "./GameObject.js";
 import { Coord } from "./misc.js";
-import { MovableObjectFree, MovableObjectFreeConfig } from "./MovableObject.js";
-import { SpriteConfig } from "./Sprite.js";
 
 interface CameraConfig {
     center?: Coord
