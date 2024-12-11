@@ -1,24 +1,51 @@
 import { GameObject } from "./GameObject.js"
-import { AnimFrame, Coord, CROP_SIZE, DEFAULT_ANIM_DURATION, DRAW_SIZE, GameState } from "./misc.js"
+import { AnimFrame, BoundingBox, Coord, CROP_SIZE, DEFAULT_ANIM_DURATION, DRAW_SIZE, GameState } from "./misc.js"
 
-
-// constructor parameters
 export interface SpriteConfig {
-    gameObject?: GameObject                     // optional paramenter with ?
-    src: string                                 // mandatory parameter without ?
-    imgOffset?: Coord
-    cropSize?: number
-    drawSize?: number
+    gameObject?: GameObject
+    src: string
+    drawOffset?: Coord
+    spritePadding?: BoundingBox
+    cropSize?: BoundingBox
+    drawSize?: BoundingBox
     isAnimated?: boolean
-    animations?: {[key: string] : AnimFrame[]}  // dynamic object with unknown property names
+    animations?: {[key: string] : AnimFrame[]}
     currentAnim?: string
 }
 
 export class Sprite {
+
+    private static imageCache = new Map<string, { img: HTMLImageElement, count: number}>()
+
+    private static async addImage(src: string) {
+        return new Promise<HTMLImageElement>((resolve, reject) => {
+            if(this.imageCache.has(src)) {
+                this.imageCache.get(src)!.count++
+                resolve(this.imageCache.get(src)!.img)
+            } else {
+                const img = new Image()
+                img.src = src
+                this.imageCache.set(src, { img, count: 1 })
+                img.onload = () => resolve(img)
+            }
+        })
+    }
+
+    static removeImage(src: string) {
+        if(this.imageCache.has(src)) {
+            let entry = this.imageCache.get(src)!
+            entry.count--
+            if(entry.count == 0) {
+                this.imageCache.delete(src)
+            }
+        }
+    }
+
     img: HTMLImageElement | null = null
-    cropSize: number
-    drawSize: number
-    imgOffset = { x: 0, y: 0 }
+    spritePadding = { width: 0, height: 0 }
+    cropSize: BoundingBox
+    drawSize: BoundingBox
+    drawOffset: Coord = { x: 0, y: 0 }
     isAnimated = true
     
     private gameObject: GameObject
@@ -36,21 +63,22 @@ export class Sprite {
         this.gameObject = config.gameObject!
 
         if (config.src != "") {
-            this.img = new Image()
-            this.img.src = config.src
-            this.img.onload = () => this.imgLoaded = true
-            this.imgOffset = config.imgOffset || this.imgOffset
+            Sprite.addImage(config.src).then(img => {
+                this.img = img
+                this.imgLoaded = true
+            })
+            this.drawOffset = config.drawOffset ?? this.drawOffset
         }
 
-        this.cropSize = config.cropSize || CROP_SIZE
-        this.drawSize = config.drawSize || DRAW_SIZE
+        this.spritePadding = config.spritePadding ?? this.spritePadding
+        this.cropSize = config.cropSize ?? CROP_SIZE
+        this.drawSize = config.drawSize ?? DRAW_SIZE
 
-        this.isAnimated = config.isAnimated || this.isAnimated
-        this.animations = config.animations || this.animations // value from config if present, else default
-        this.currentAnim = config.currentAnim || this.currentAnim
+        this.isAnimated = config.isAnimated ?? this.isAnimated
+        this.animations = config.animations ?? this.animations
+        this.currentAnim = config.currentAnim ?? this.currentAnim
     }
 
-    // get methods have a syntax like properties instead of methods
     get frame(): AnimFrame { 
         return this.animations[this.currentAnim][this.currentAnimFrame]
     }
@@ -61,18 +89,18 @@ export class Sprite {
             this.currentAnimFrame += 1
             this.currentAnimFrame %= this.animations[this.currentAnim].length
             
-            this.animProgress = this.frame.duration || DEFAULT_ANIM_DURATION
+            this.animProgress = this.frame.duration ?? DEFAULT_ANIM_DURATION
         }
     }
 
 
-    draw(ctx: CanvasRenderingContext2D, state: GameState) { // function return types are always optional
+    draw(ctx: CanvasRenderingContext2D, state: GameState) {
         if(this.imgLoaded) {
             const drawPos = this.gameObject.drawPos
-            const frame = this.frame // calling get method as if it is a property
+            const frame = this.frame
 
-            let dx = drawPos.x + this.imgOffset.x + (frame.offset?.x || 0)
-            let dy = drawPos.y + this.imgOffset.y + (frame.offset?.x || 0)
+            let dx = drawPos.x + this.drawOffset.x + (frame.offset?.x ?? 0)
+            let dy = drawPos.y + this.drawOffset.y + (frame.offset?.y ?? 0)
 
             if(state.camera) {
                 const cameraOffset = state.camera.offset
@@ -80,16 +108,16 @@ export class Sprite {
                 dy += cameraOffset.y
             }
 
-            const sx = frame.frame.x * this.cropSize
-            const sy = frame.frame.y * this.cropSize
+            const sx = frame.frame.x * (this.cropSize.width + this.spritePadding.width)
+            const sy = frame.frame.y * (this.cropSize.height + this.spritePadding.height)
 
             // draws one cropped part of the image at the location of the game object
             ctx.drawImage(
-                this.img!,                           // image to draw from
-                sx, sy,                             // crop top left
-                this.cropSize, this.cropSize,       // crop width and height
-                dx, dy,                             // draw top left
-                this.drawSize, this.drawSize        // draw width and height
+                this.img!,                                   // image to draw from
+                sx, sy,                                      // crop top left
+                this.cropSize.width, this.cropSize.height,   // crop width and height
+                dx, dy,                                      // draw top left
+                this.drawSize.width, this.drawSize.height    // draw width and height
             )
         }
     }
