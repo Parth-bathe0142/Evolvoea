@@ -1,5 +1,5 @@
-import { GameObjectConfig } from "../basic/GameObject";
-import { MovableObjectFree } from "../basic/MovableObject";
+import { GameObjectConfig } from "../core/GameObject";
+import { MovableObjectFree } from "../core/MovableObject";
 
 export interface SlimeConfig extends GameObjectConfig {
     type: string
