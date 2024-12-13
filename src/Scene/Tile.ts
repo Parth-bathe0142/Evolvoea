@@ -1,4 +1,4 @@
-import { Coord } from "../models/core/misc";
+import { Coord } from "../models/core/misc.js";
 
 export interface Tile {
     gridPos: Coord
