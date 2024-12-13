@@ -9,7 +9,7 @@ export interface SpriteConfig {
     cropSize?: BoundingBox
     drawSize?: BoundingBox
     isAnimated?: boolean
-    animations?: {[key: string] : AnimFrame[]}
+    animations?: { [key: string] : AnimFrame[] }
     currentAnim?: string
 }
 
