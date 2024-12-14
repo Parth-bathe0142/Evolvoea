@@ -2,6 +2,8 @@ import { MovableObjectGrid } from "./models/core/MovableObject.js"
 import { Time } from "./models/core/Time.js"
 import { Camera } from "./models/core/Camera.js"
 import { PixelMap } from "./Scene/PixelMap.js"
+import { KeyInput } from "./models/core/KeyInput.js"
+import { Player } from "./models/characters/Player.js"
 
 // HTML Element that supports drawing custom images
 const canvas = document.querySelector("canvas#game-canvas") as HTMLCanvasElement
@@ -10,43 +12,12 @@ const canvas = document.querySelector("canvas#game-canvas") as HTMLCanvasElement
 const ctx = canvas.getContext("2d")!
 
 // example of creating an object using configs, skipping some optional parameters
-const object = new MovableObjectGrid({
+const object = new Player({
     gridPos: { x: 12, y: 7 },
+    name: "player",
     spriteConfig: {
         src: "assets/spritesheets/character.png",
-        cropSize: { width: 48, height: 48 },
-        drawSize: { width: 48, height: 48 },
-        drawOffset: { x: -24, y: -24 },
-        animations: {
-            "idle-down": [
-                { frame: { x: 0, y: 0 } }
-            ],
-            "walk-down": [
-                { frame: { x: 0, y: 0 } },
-                { frame: { x: 2, y: 0 } },
-                { frame: { x: 0, y: 0 } },
-                { frame: { x: 3, y: 0 } },
-            ],
-            "walk-left": [
-                { frame: { x: 0, y: 2 } },
-                { frame: { x: 2, y: 2 } },
-                { frame: { x: 0, y: 2 } },
-                { frame: { x: 3, y: 2 } },
-
-            ],
-            "bob-down": [
-                { frame: { x: 0, y: 0 }, duration: 32 },
-                { frame: { x: 1, y: 0 }, duration: 32 },
-            ],
-            "rotate": [
-                { frame: { x: 0, y: 0 } },
-                { frame: { x: 0, y: 2 } },
-                { frame: { x: 0, y: 1 } },
-                { frame: { x: 0, y: 3 } }
-
-            ]
-        },
-        currentAnim: "rotate"
+        currentAnim: "idle-down"
     }
 })
 
@@ -56,7 +27,7 @@ const object2 = new MovableObjectGrid({
         src: "assets/spritesheets/character.png",
         cropSize: { width: 48, height: 48 },
         drawSize: { width: 48, height: 48 },
-        drawOffset: { x: -24, y: -24 },
+        drawOffset: { x: 0, y: -4 },
         isAnimated: false
     }
 })
@@ -79,10 +50,7 @@ function render() {
     newMap.drayLayer(ctx, gameState, "Roof")
 }
 
+const keyInput = new KeyInput({ puppet: object })
+
 const time = new Time(48)
 const { pause, play } = time.runLoop(update, render)!
-
-await time.delay(4)
-object.makeMove("down")
-await time.delay(4)
-object.makeMove("left")

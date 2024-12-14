@@ -1,8 +1,8 @@
-import { Arena } from "../../battle/Arena.js";
-import { GameObjectConfig } from "../core/GameObject.js";
-import { MovableObjectFree } from "../core/MovableObject.js";
-import { SpriteConfig } from "../core/Sprite.js";
-import { Attack, FreeCollider } from "../core/misc.js";
+import { Arena } from "../../../battle/Arena.js";
+import { GameObjectConfig } from "../../core/GameObject.js";
+import { MovableObjectFree } from "../../core/MovableObject.js";
+import { SpriteConfig } from "../../core/Sprite.js";
+import { Attack, FreeCollider } from "../../core/misc.js";
 
 export interface SlimeConfig extends Omit<GameObjectConfig, "spriteConfig"> {
     radius?: number

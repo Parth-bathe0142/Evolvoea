@@ -86,6 +86,13 @@ export class Sprite {
         return this.animations[this.currentAnim][this.currentAnimFrame]
     }
 
+    set currentAnimation(value: string) {
+        if(this.animations[value] && this.currentAnim != value) {
+            this.currentAnim = value
+            this.currentAnimFrame = 0
+        }
+    }
+
     updateSprite() {
         this.animProgress--
         if(this.animProgress == 0) {
