@@ -1,5 +1,7 @@
+import { idGenerator } from "./IdGenerator.js"
 import { Coord } from "./misc.js"
 import { Sprite, SpriteConfig } from "./Sprite.js"
+import { utils } from "./utils.js"
 
 
 /**
@@ -8,7 +10,8 @@ import { Sprite, SpriteConfig } from "./Sprite.js"
  */
 export interface GameObjectConfig {
     drawPos?: Coord,
-    spriteConfig: SpriteConfig 
+    spriteConfig: SpriteConfig
+    id?: number
 }
 
 /**
@@ -17,10 +20,12 @@ export interface GameObjectConfig {
  */
 export abstract class GameObject {
 
+    id: number
     drawPos: Coord = { x: 0, y: 0 }
     sprite: Sprite
 
     constructor(config: GameObjectConfig) {
+        this.id = config.id ? idGenerator.bookId(config.id) : idGenerator.generateNewId()
         this.drawPos = config.drawPos || { x: 0, y: 0 }
 
         config.spriteConfig.gameObject = this

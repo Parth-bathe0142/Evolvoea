@@ -100,7 +100,6 @@ export class MovableObjectGrid extends GameObject {
 
 export interface MovableObjectFreeConfig extends GameObjectConfig {
     speed: number
-    precision?: number
 }
 
 /**
@@ -114,28 +113,24 @@ export interface MovableObjectFreeConfig extends GameObjectConfig {
 export class MovableObjectFree extends GameObject {
     moving: boolean = false
     speed: number
-    precision?: number
     direction = { x: 0, y: 0 }
     targetPos: Coord | null = null
 
     constructor(config: MovableObjectFreeConfig) {
         super(config)
         this.speed = config.speed
-        this.precision = config.precision
     }
 
     /**
      * Updates drawPos and moves it towards destination
-     * at given speed. Stops within 5 points distance of
-     * destination in order to avoid rounding errors but
-     * this may fail for higher speeds that cross more than 
-     * 5 points per step
+     * at given speed. Stops within \<speed> points distance of
+     * destination in order to avoid rounding errors
      */
     update() {
         super.update()
         
         if(this.moving) {
-            if(utils.getDistance(this.drawPos, this.targetPos!) < (this.precision ?? 5)) {
+            if(utils.getDistance(this.drawPos, this.targetPos!) < (this.speed + 1)) {
                 this.stop()
             }
             let dx = this.direction.x * this.speed
