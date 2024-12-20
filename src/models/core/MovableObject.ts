@@ -1,8 +1,10 @@
 import { utils } from "./utils.js";
 import { GameObject, GameObjectConfig } from "./GameObject.js";
-import { Coord } from "./misc.js";
+import { Coord, GridDirs } from "./misc.js";
 
-type GridDirs = "up" | "right" | "down" | "left" | "none"
+export interface MovableObjectGridConfig extends GameObjectConfig {
+    gridPos?: Coord
+}
 /**
  * Represents objects that can move in the world, following
  * the fixed positions of cells in a grid. movement is smooth
@@ -15,8 +17,9 @@ export class MovableObjectGrid extends GameObject {
     steps = 0
     direction: GridDirs = "none"
     movingTo: Coord | null = null
+    moveResolve: (() => void) | null = null
 
-    constructor(config: GameObjectConfig & { gridPos?: Coord }) {
+    constructor(config: MovableObjectGridConfig) {
         super(config)
         this.gridPos = config.gridPos || { x: 0, y: 0 }
         this.drawPos = utils.GridToDraw(this.gridPos)
@@ -52,9 +55,7 @@ export class MovableObjectGrid extends GameObject {
                     
             this.steps--
             if(this.steps == 0) {
-                this.direction = "none"
-                this.gridPos = this.movingTo!
-                this.movingTo = null
+                this.stop()
             }
         }
     }
@@ -63,7 +64,11 @@ export class MovableObjectGrid extends GameObject {
      * updates to the sprite of this object
      * @param to direction of intended movement
      */
-    makeMove(to: GridDirs) {
+    makeMove(to: GridDirs, resolve?: ()=>void) {
+        if(this.movingTo) {
+            return
+        }
+        this.moveResolve = resolve ?? null
         if(this.direction == "none" && this.steps == 0) {
             this.direction = to
             this.steps = 16
@@ -83,12 +88,18 @@ export class MovableObjectGrid extends GameObject {
             }
         }
     }
+
+    stop() {
+        this.direction = "none"
+        this.gridPos = this.movingTo!
+        this.movingTo = null
+        this.moveResolve && this.moveResolve()
+    }
 }
 
 
 export interface MovableObjectFreeConfig extends GameObjectConfig {
     speed: number
-    precision?: number
 }
 
 /**
@@ -102,28 +113,24 @@ export interface MovableObjectFreeConfig extends GameObjectConfig {
 export class MovableObjectFree extends GameObject {
     moving: boolean = false
     speed: number
-    precision?: number
     direction = { x: 0, y: 0 }
     targetPos: Coord | null = null
 
     constructor(config: MovableObjectFreeConfig) {
         super(config)
         this.speed = config.speed
-        this.precision = config.precision
     }
 
     /**
      * Updates drawPos and moves it towards destination
-     * at given speed. Stops within 5 points distance of
-     * destination in order to avoid rounding errors but
-     * this may fail for higher speeds that cross more than 
-     * 5 points per step
+     * at given speed. Stops within \<speed> points distance of
+     * destination in order to avoid rounding errors
      */
     update() {
         super.update()
         
         if(this.moving) {
-            if(utils.getDistance(this.drawPos, this.targetPos!) < (this.precision ?? 5)) {
+            if(utils.getDistance(this.drawPos, this.targetPos!) < (this.speed + 1)) {
                 this.stop()
             }
             let dx = this.direction.x * this.speed

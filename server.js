@@ -10,7 +10,7 @@ app.get("/test", (_, res) => {
     res.json({ result: "success" })
 })
 
-app.get("/home", (_, res) => {
+app.get("/game", (_, res) => {
     const filePath = path.join(__dirname, "/dist/index.html")
     res.sendFile(filePath, (err) => {
         if (err) {
@@ -22,5 +22,5 @@ app.get("/home", (_, res) => {
 
 app.listen(port, () => {
     console.log(`Listening at http://localhost:${port}`)
-    console.log(`Open home page at http://localhost:${port}/home`)
+    console.log(`Open game page at http://localhost:${port}/game`)
 })

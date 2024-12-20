@@ -40,6 +40,28 @@ export interface GameState {
     time: Time
 }
 
+export interface PuppetCommand {
+    action: "walk" | "stand" | "interact"
+    direction: GridDirs
+    duration?: number
+    retry?: boolean
+}
+
+/**
+ * GameObjects that can be controlled by keyboard inputs
+ * or global events, such as Player or NPCs.
+ * All puppet methods are async and resolve when the action
+ * has finished so that the controller can wait for it
+ */
+export interface Puppet {
+    facing: GridDirs
+    beingControlled: boolean
+    startBehavior(command: PuppetCommand): Promise<void>
+    startWalk(dir: GridDirs): Promise<void>
+    startStand(dir: GridDirs, duration: number): Promise<void>
+    startInteraction(): Promise<void>
+}
+
 export interface Attack {
     damage: number
     type: "normal"
@@ -51,6 +73,7 @@ export interface FreeCollider {
     radius: number
 }
 
+export type GridDirs = "up" | "right" | "down" | "left" | "none"
 export type SlimeType = "melee" | "ranged"
 
 /** Default assumed size of each sprite in any spritesheet, there will be several exceptions */

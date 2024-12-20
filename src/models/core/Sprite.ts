@@ -9,7 +9,7 @@ export interface SpriteConfig {
     cropSize?: BoundingBox
     drawSize?: BoundingBox
     isAnimated?: boolean
-    animations?: {[key: string] : AnimFrame[]}
+    animations?: { [key: string] : AnimFrame[] }
     currentAnim?: string
 }
 
@@ -84,6 +84,13 @@ export class Sprite {
 
     get frame(): AnimFrame { 
         return this.animations[this.currentAnim][this.currentAnimFrame]
+    }
+
+    set currentAnimation(value: string) {
+        if(this.animations[value] && this.currentAnim != value) {
+            this.currentAnim = value
+            this.currentAnimFrame = 0
+        }
     }
 
     updateSprite() {

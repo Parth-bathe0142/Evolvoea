@@ -7,7 +7,7 @@ import { Tile } from "./Tile.js";
  */
 interface Layer {
     name: string
-    tiles: Tile[] // tile array parsed from what was received from json
+    tiles: Tile[] /** @todo change to Map<Coord, Tile> */
     collider: boolean // other data stored in the layer
 }
 

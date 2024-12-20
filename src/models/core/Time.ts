@@ -79,7 +79,7 @@ export class Time {
             pause: () => { paused = true },
 
             play: () => {
-                if(paused = false) return
+                if(paused == false) return
                 paused = false
                 this.now = performance.now()
                 play(0)
@@ -90,8 +90,7 @@ export class Time {
     /** 
      * Resets the frame count back to 0. Very risky
      * Should only be used when changing scenes and when it is known
-     * that no delays are set as they will be missed and start their own 
-     * RAF loops causing severe performance issues
+     * that no delays are set as they will be missed
      */
     rewind() {
         if(this.schedules.size > 0) {
@@ -114,7 +113,7 @@ export class Time {
     async delay(timeout: number, unit: "frame" | "second" = "second"): Promise<void> {
         if (timeout < 0) throw new Error("negative delay demanded")
 
-        const targetFrame = this._currentFrame + timeout * (unit == "second" ? this.FPS : 1)
+        const targetFrame = Math.floor(this._currentFrame + timeout * (unit == "second" ? this.FPS : 1))
         return new Promise<void>((resolve) => {
             this.addToSchedule(targetFrame, resolve)
         });
@@ -122,7 +121,7 @@ export class Time {
 
     /** mini unit test */
     static async Test() {
-        const update = (t: Time) => console.log(`frame: ${t._currentFrame}`)
+        const update = (t: Time) => console.log(`frame: ${t.currentFrame}`)
         const render = () => {}
 
         const time = new Time(2)

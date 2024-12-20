@@ -1,8 +1,9 @@
-import { GameObjectConfig } from "../core/GameObject.js";
-import { MovableObjectGrid } from "../core/MovableObject.js";
+import { Scene } from "../../../Scene/Scene.js";
+import { MovableObjectGrid, MovableObjectGridConfig } from "../../core/MovableObject.js";
 
-export interface PersonConfig extends GameObjectConfig {
+export interface PersonConfig extends MovableObjectGridConfig {
     name: string
+    scene?: Scene
 }
 
 /**
@@ -27,11 +28,13 @@ export class Person extends MovableObjectGrid {
     }
 
     name: string
+    scene: Scene
 
     constructor(config: PersonConfig) {
         super(config)
 
         this.name = config.name
+        this.scene = config.scene!
     }
 
     /** Does nothing */
