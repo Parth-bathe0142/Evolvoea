@@ -69,7 +69,7 @@ export class PixelMap {
     layerImageData: { [key: string]: ImageData } | null = {}
 
     /**
-     * Displays error when the map is not found
+     * Displays error when map is not found
      * @param name The folder name in which the spritesheet and map.json is present
      * @param spriteRows number of rows in spritesheet.png (rows -> up/down)
      * @param spriteCols number of cols in spritesheet.png (cols -> right/left)
