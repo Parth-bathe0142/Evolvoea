@@ -3,6 +3,7 @@ const path = require("path")
 console.log(require('dotenv').config())
 
 const port = process.env.PORT
+const CONNECTION_STRING = process.env.CONNECTION_STRING
 const app = express()
 
 app.use('/', express.static(path.join(__dirname, '../dist')))
