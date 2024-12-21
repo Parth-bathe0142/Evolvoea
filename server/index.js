@@ -1,17 +1,18 @@
 const express = require("express")
 const path = require("path")
+console.log(require('dotenv').config())
 
-const port = 4000
+const port = process.env.PORT
 const app = express()
 
-app.use('/', express.static(path.join(__dirname, 'dist')))
+app.use('/', express.static(path.join(__dirname, '../dist')))
 
 app.get("/test", (_, res) => {
     res.json({ result: "success" })
 })
 
 app.get("/game", (_, res) => {
-    const filePath = path.join(__dirname, "/dist/index.html")
+    const filePath = path.join(__dirname, "../dist/index.html")
     res.sendFile(filePath, (err) => {
         if (err) {
             console.error("File sending error:", err.message)
