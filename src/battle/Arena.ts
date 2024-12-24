@@ -1,4 +1,4 @@
-import { Slime } from "../models/characters/Slime.js";
+import { Slime } from "../models/characters/slimes/Slime.js"
 
 export class Arena {
     team1: Slime[] = []

@@ -4,6 +4,10 @@ import { Camera } from "./models/core/Camera.js"
 import { PixelMap } from "./Scene/PixelMap.js"
 import { KeyInput } from "./models/core/KeyInput.js"
 import { Player } from "./models/characters/Player.js"
+import { Scene } from "./Scene/Scene.js"
+
+
+/*
 
 // HTML Element that supports drawing custom images
 const canvas = document.querySelector("canvas#game-canvas") as HTMLCanvasElement
@@ -42,15 +46,23 @@ function update() {
 function render() {
     const gameState = { camera, time }
     ctx.clearRect(0, 0, canvas.width, canvas.height)
-    newMap.drayLayer(ctx, gameState, "Water")
-    newMap.drayLayer(ctx, gameState, "Ground")
-    newMap.drayLayer(ctx, gameState, "main")
+    newMap.drawLayer(ctx, gameState, "Water")
+    newMap.drawLayer(ctx, gameState, "Ground")
+    newMap.drawLayer(ctx, gameState, "main")
     object.sprite.draw(ctx, gameState)
     object2.sprite.draw(ctx, gameState)
-    newMap.drayLayer(ctx, gameState, "Roof")
+    newMap.drawLayer(ctx, gameState, "Roof")
 }
 
 const keyInput = new KeyInput({ puppet: object })
 
 const time = new Time(48)
 const { pause, play } = time.runLoop(update, render)!
+
+*/
+
+
+const scene = new Scene();
+setTimeout(() => {
+    scene.init();
+}, 200);
