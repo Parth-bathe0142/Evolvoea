@@ -7,7 +7,7 @@ import { Tile } from "./Tile.js";
  */
 interface Layer {
     name: string
-    tiles: Tile[] /** @todo change to Map<Coord, Tile> */
+    tiles: Map<Coord, Tile> /** @todo change to Map<Coord, Tile> */
     collider: boolean // other data stored in the layer
 }
 
@@ -102,17 +102,14 @@ export class PixelMap {
 
             this.layers[layer.name] = {
                 name: layer.name,
-                tiles: [],
+                tiles: new Map<Coord, Tile>(),
                 collider: layer.collider
             }
             const current = this.layers[layer.name]
             // { id: string, x: number, y: number }
             //{gridPos: Coord; spritePos: Coord}
             for (const obj of layer.tiles) {
-                current.tiles.push({
-                    gridPos: { x: obj.x, y: obj.y },
-                    spritePos: this.getSpritesheetCoord(obj.id)
-                })
+                current.tiles.set({ x: obj.x, y: obj.y }, { spritePos: this.getSpritesheetCoord(obj.id) })
             }
         }
     }
@@ -134,10 +131,10 @@ export class PixelMap {
      * @param state 
      * @param layer Which layer to draw
      */
-    drayLayer(ctx: CanvasRenderingContext2D, state: GameState, layer: string) {
+    drawLayer(ctx: CanvasRenderingContext2D, state: GameState, layer: string) {
         const tiles = this.layers[layer].tiles
-        for (const tile of tiles) {
-            let drawPos = utils.GridToDraw(tile.gridPos)
+        for (const [coord, tile] of tiles) {
+            let drawPos = utils.GridToDraw(coord)
             drawPos.x += state.camera?.offset.x ?? 0
             drawPos.y += state.camera?.offset.y ?? 0
             ctx.drawImage(
