@@ -1,6 +1,6 @@
 import { Attack } from "../../core/misc.js";
 import { utils } from "../../core/utils.js";
-import { Slime, SlimeConfig } from "Slime.js";
+import { Slime, SlimeConfig } from "./Slime.js";
 
 export interface MeleeSlimeConfig extends SlimeConfig {
 
