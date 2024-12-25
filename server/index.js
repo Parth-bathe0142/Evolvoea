@@ -4,6 +4,7 @@ const { connectDB, closeDB } = require('./mongoClient.js')
 require('dotenv').config()
 
 const port = process.env.PORT
+const CONNECTION_STRING = process.env.CONNECTION_STRING
 const app = express()
 let client;
 

@@ -36,7 +36,7 @@ export abstract class Slime extends MovableObjectFree implements FreeCollider {
     arena: Arena
 
     targetEnemy: Slime | null = null
-    currentAction: "idle" | "attack" | "flee" | "" = "idle"
+    currentAction: "idle" | "attack" | "flee" | "chase" = "idle"
     team: 1 | 2
     isAlive: boolean = true
     private tick: number = 0
