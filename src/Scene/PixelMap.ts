@@ -7,7 +7,7 @@ import { Tile } from "./Tile.js";
  */
 interface Layer {
     name: string
-    tiles: Map<Coord, Tile> /** @todo change to Map<Coord, Tile> */
+    tiles: Map<string, Tile> 
     collider: boolean // other data stored in the layer
 }
 
@@ -15,6 +15,7 @@ interface JSONInput {
     tileSize: number
     mapWidth: number
     mapHeight: number
+    
     layers: {
         name: string
         tiles: { id: string, x: number, y: number }[]
@@ -81,10 +82,7 @@ export class PixelMap {
 
         fetch(`assets/maps/${name}/map.json`)
             .then(response => response.json())
-            .then(js => {
-                json = js
-                this.initLayer(json)
-            })
+            .then(json => this.initLayer(json))
             .catch(err => console.error("map not found: " + err))
 
         this.spriteSheet.src = `assets/maps/${name}/spritesheet.png`
@@ -102,25 +100,23 @@ export class PixelMap {
 
             this.layers[layer.name] = {
                 name: layer.name,
-                tiles: new Map<Coord, Tile>(),
+                tiles: new Map<string, Tile>(),
                 collider: layer.collider
             }
             const current = this.layers[layer.name]
             // { id: string, x: number, y: number }
-            //{gridPos: Coord; spritePos: Coord}
+            // <Coordstr, {spritePos: Coord}>
             for (const obj of layer.tiles) {
-                current.tiles.set({ x: obj.x, y: obj.y }, { spritePos: this.getSpritesheetCoord(obj.id) })
+                current.tiles.set(
+                    utils.coordToString({ x: obj.x, y: obj.y }),
+                    { spritePos: this.getSpritesheetCoord(obj.id) }
+                )
             }
+            console.log(current);
+            
         }
     }
 
-    /**
-     * 
-     * @todo 
-     * @param ctx 
-     * @param state 
-     * @param layer 
-     */
     drawLayerData(ctx: CanvasRenderingContext2D, state: GameState, layer: string) {
 
     }
@@ -134,7 +130,7 @@ export class PixelMap {
     drawLayer(ctx: CanvasRenderingContext2D, state: GameState, layer: string) {
         const tiles = this.layers[layer].tiles
         for (const [coord, tile] of tiles) {
-            let drawPos = utils.GridToDraw(coord)
+            let drawPos = utils.GridToDraw(utils.stringToCoord(coord))
             drawPos.x += state.camera?.offset.x ?? 0
             drawPos.y += state.camera?.offset.y ?? 0
             ctx.drawImage(

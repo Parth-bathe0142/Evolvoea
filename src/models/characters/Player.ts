@@ -1,4 +1,5 @@
 import { GridDirs, Puppet, PuppetCommand } from "../core/misc.js";
+import { utils } from "../core/utils.js";
 import { Person, PersonConfig } from "./people/Person.js";
 
 export interface PlayerConfig extends PersonConfig {
@@ -68,7 +69,7 @@ export class Player extends Person implements Puppet {
         }
         config.spriteConfig.cropSize = { width: 48, height: 48 }
         config.spriteConfig.drawSize = { width: 48, height: 48 }
-        config.spriteConfig.drawOffset = { x: 0, y: -4 }
+        config.spriteConfig.drawOffset = { x: -16, y: -20 }
 
         super(config)
     }
@@ -81,8 +82,13 @@ export class Player extends Person implements Puppet {
             }
             switch (command.action) {
                 case "walk":
-                    await this.startWalk(command.direction)
-                    resolve()
+                    const next = utils.getNextCoord(this.gridPos, command.direction)
+                    if(this.scene.isSpaceValid(next)) {
+                        await this.startWalk(command.direction)
+                        resolve()
+                    } else {
+                        reject()
+                    }
                 break
             
                 case "stand":

@@ -4,6 +4,7 @@ import { GameObject, GameObjectConfig } from "../models/core/GameObject.js"
 import { KeyInput } from "../models/core/KeyInput.js"
 import { Coord } from "../models/core/misc.js"
 import { Time } from "../models/core/Time.js"
+import { utils } from "../models/core/utils.js"
 import { PixelMap } from "./PixelMap.js"
 
 export interface SceneJSON {
@@ -53,6 +54,7 @@ export class Scene {
         this.player = new Player({
             gridPos: { x: 5, y: 7 },
             name: "player",
+            scene: this,
             spriteConfig: {
                 src: "assets/spritesheets/character.png",
                 currentAnim: "idle-down"
@@ -71,8 +73,6 @@ export class Scene {
     update = () => {
         this.player.update()
         this.objects.forEach(object => object.update())
-        console.log("update");
-
     }
 
     render = () => {
@@ -90,7 +90,7 @@ export class Scene {
             object.sprite.draw(this.ctx, gameState)
         }
         this.player.sprite.draw(this.ctx, gameState)
-        this.map.drawLayer(this.ctx, gameState, "Roof");
+        //this.map.drawLayer(this.ctx, gameState, "Roof");
     }
 
     init() {
@@ -104,19 +104,23 @@ export class Scene {
 
     togglePause() {
         if (this.isPaused) {
-            this.play!()
+            this.play?.()
             this.isPaused = false
         } else {
-            this.pause!()
+            this.pause?.()
             this.isPaused = true
         }
     }
 
-    isSpaceValid(coord: Coord) {
+    isSpaceValid(_coord: Coord) {
+        const coord = utils.coordToString(_coord)
+        console.log(this.map.layers["main"].tiles.get(coord), coord)
+        
         if (this.map.layers["Ground"].tiles.has(coord) && !this.map.layers["main"].tiles.has(coord)) {
+            console.log(true);
             return true;
-        }
-        else {
+        } else {
+            console.log(false);
             return false;
         }
     }
