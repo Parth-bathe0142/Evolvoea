@@ -6,6 +6,7 @@ import { Coord } from "../models/core/misc.js"
 import { Time } from "../models/core/Time.js"
 import { utils } from "../models/core/utils.js"
 import { PixelMap } from "./PixelMap.js"
+import initWASM,{ find_path, set_map, InitOutput } from "../../wasm/wasm.js"
 
 export interface SceneJSON {
     objects: { [key: string]: GameObjectConfig }
@@ -35,6 +36,7 @@ export class Scene {
 
     ctx: CanvasRenderingContext2D
     canvas: HTMLCanvasElement
+    wasm?: InitOutput
 
     objects: GameObject[] = []
     interactables: Map<Coord, GameObject>
@@ -68,6 +70,9 @@ export class Scene {
         this.keyInput = new KeyInput({ puppet: this.player })
         this.isPaused = false
 
+        initWASM("../../wasm/wasm_bg.wasm")
+          .then((wasm: InitOutput) => this.wasm = wasm)
+          .catch(console.error)
     }
 
     update = () => {

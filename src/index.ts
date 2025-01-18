@@ -1,12 +1,4 @@
-import { MovableObjectGrid } from "./models/core/MovableObject.js"
-import { Time } from "./models/core/Time.js"
-import { Camera } from "./models/core/Camera.js"
-import { PixelMap } from "./Scene/PixelMap.js"
-import { KeyInput } from "./models/core/KeyInput.js"
-import { Player } from "./models/characters/Player.js"
 import { Scene } from "./Scene/Scene.js"
-
-
 /*
 
 // HTML Element that supports drawing custom images
