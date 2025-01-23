@@ -3,10 +3,11 @@ import { Camera } from "../models/core/Camera.js"
 import { GameObject, GameObjectConfig } from "../models/core/GameObject.js"
 import { KeyInput } from "../models/core/KeyInput.js"
 import { Coord } from "../models/core/misc.js"
+import { PathFinder } from "../models/core/PathFinder.js"
 import { Time } from "../models/core/Time.js"
 import { utils } from "../models/core/utils.js"
 import { PixelMap } from "./PixelMap.js"
-import initWASM,{ find_path, set_map, InitOutput } from "../../wasm/wasm.js"
+
 
 export interface SceneJSON {
     objects: { [key: string]: GameObjectConfig }
@@ -36,7 +37,6 @@ export class Scene {
 
     ctx: CanvasRenderingContext2D
     canvas: HTMLCanvasElement
-    wasm?: InitOutput
 
     objects: GameObject[] = []
     interactables: Map<Coord, GameObject>
@@ -45,6 +45,7 @@ export class Scene {
     time: Time
     camera: Camera
     keyInput: KeyInput
+    pathFinder: PathFinder
 
     isPaused: boolean
 
@@ -68,11 +69,18 @@ export class Scene {
             object: this.player
         })
         this.keyInput = new KeyInput({ puppet: this.player })
+        this.pathFinder = new PathFinder()
+
         this.isPaused = false
 
-        initWASM("../../wasm/wasm_bg.wasm")
-          .then((wasm: InitOutput) => this.wasm = wasm)
-          .catch(console.error)
+        this.load()
+    }
+
+    async load() {
+        await this.map.load()
+        const bmap = PathFinder.mapFromPixelMap(this.map)
+        this.pathFinder.setMap(bmap, this.map.height, this.map.width)
+        this.init()
     }
 
     update = () => {
@@ -95,7 +103,7 @@ export class Scene {
             object.sprite.draw(this.ctx, gameState)
         }
         this.player.sprite.draw(this.ctx, gameState)
-        //this.map.drawLayer(this.ctx, gameState, "Roof");
+        this.map.drawLayer(this.ctx, gameState, "Roof");
     }
 
     init() {
@@ -119,13 +127,10 @@ export class Scene {
 
     isSpaceValid(_coord: Coord) {
         const coord = utils.coordToString(_coord)
-        console.log(this.map.layers["main"].tiles.get(coord), coord)
         
         if (this.map.layers["Ground"].tiles.has(coord) && !this.map.layers["main"].tiles.has(coord)) {
-            console.log(true);
             return true;
         } else {
-            console.log(false);
             return false;
         }
     }

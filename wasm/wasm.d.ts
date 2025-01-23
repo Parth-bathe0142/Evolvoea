@@ -1,14 +1,14 @@
 /* tslint:disable */
 /* eslint-disable */
-export function set_map(map: Uint8Array, height: number, width: number): void;
-export function find_path(startx: number, starty: number, endx: number, endy: number): string[];
+export function set_map(map: Uint8Array, height: number, width: number): boolean;
+export function find_path(startx: number, starty: number, endx: number, endy: number, mode: number): string[];
 
 export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembly.Module;
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory;
-  readonly set_map: (a: number, b: number, c: number, d: number) => void;
-  readonly find_path: (a: number, b: number, c: number, d: number) => [number, number];
+  readonly set_map: (a: number, b: number, c: number, d: number) => number;
+  readonly find_path: (a: number, b: number, c: number, d: number, e: number) => [number, number];
   readonly __wbindgen_export_0: WebAssembly.Table;
   readonly __wbindgen_malloc: (a: number, b: number) => number;
   readonly __externref_drop_slice: (a: number, b: number) => void;

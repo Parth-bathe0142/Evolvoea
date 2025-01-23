@@ -53,3 +53,7 @@ impl Tile {
         }
     }
 }
+
+pub enum Mode {
+    Four, Eight
+}

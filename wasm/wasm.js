@@ -30,11 +30,13 @@ function passArray8ToWasm0(arg, malloc) {
  * @param {Uint8Array} map
  * @param {number} height
  * @param {number} width
+ * @returns {boolean}
  */
 export function set_map(map, height, width) {
     const ptr0 = passArray8ToWasm0(map, wasm.__wbindgen_malloc);
     const len0 = WASM_VECTOR_LEN;
-    wasm.set_map(ptr0, len0, height, width);
+    const ret = wasm.set_map(ptr0, len0, height, width);
+    return ret !== 0;
 }
 
 let cachedDataViewMemory0 = null;
@@ -61,10 +63,11 @@ function getArrayJsValueFromWasm0(ptr, len) {
  * @param {number} starty
  * @param {number} endx
  * @param {number} endy
+ * @param {number} mode
  * @returns {string[]}
  */
-export function find_path(startx, starty, endx, endy) {
-    const ret = wasm.find_path(startx, starty, endx, endy);
+export function find_path(startx, starty, endx, endy, mode) {
+    const ret = wasm.find_path(startx, starty, endx, endy, mode);
     var v1 = getArrayJsValueFromWasm0(ret[0], ret[1]).slice();
     wasm.__wbindgen_free(ret[0], ret[1] * 4, 4);
     return v1;
@@ -104,6 +107,9 @@ async function __wbg_load(module, imports) {
 function __wbg_get_imports() {
     const imports = {};
     imports.wbg = {};
+    imports.wbg.__wbg_log_e61d83ec87fcf66d = function(arg0, arg1) {
+        console.log(getStringFromWasm0(arg0, arg1));
+    };
     imports.wbg.__wbindgen_init_externref_table = function() {
         const table = wasm.__wbindgen_export_0;
         const offset = table.grow(4);

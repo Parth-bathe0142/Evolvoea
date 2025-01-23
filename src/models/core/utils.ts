@@ -76,5 +76,10 @@ export const utils = {
         let dist = this.getDistance(object1.drawPos, object2.drawPos)
 
         return dist <= (object1.radius + object2.radius)
+    },
+
+    pathToInstructions(path: string[]) {
+        let instructions: GridDirs[] = []
+        return instructions
     }
 }

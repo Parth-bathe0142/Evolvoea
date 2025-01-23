@@ -1,4 +1,4 @@
-import { GridDirs, Puppet, PuppetCommand } from "../core/misc.js";
+import { Coord, GridDirs, Puppet, PuppetCommand } from "../core/misc.js";
 import { utils } from "../core/utils.js";
 import { Person, PersonConfig } from "./people/Person.js";
 
@@ -103,6 +103,36 @@ export class Player extends Person implements Puppet {
         return new Promise<void>((res) => {
             this.facing = dir
             this.makeMove(dir, res)
+        })
+    }
+
+    startWalkTo(coord: Coord): Promise<void> {
+        return new Promise<void>(async (res, rej) => {
+
+            if(this.gridPos.x == coord.x && this.gridPos.y == coord.y) {
+                res()
+            } else {
+                try {
+                    const path = this.scene.pathFinder.findPath(
+                        this.gridPos.x,
+                        this.gridPos.y,
+                        coord.x,
+                        coord.y,
+                        4
+                    )
+                    if(path.length != 0) {
+                        for(const inst of path as GridDirs[]) {
+                            await this.startWalk(inst)
+                        }
+                        res()
+                    } else { 
+                        rej()
+                    }
+                } catch (error) {
+                    rej()
+                }
+            }
+
         })
     }
 

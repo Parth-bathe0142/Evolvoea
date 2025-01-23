@@ -2,9 +2,10 @@ mod models;
 
 use once_cell::sync::Lazy;
 use wasm_bindgen::prelude::wasm_bindgen;
-use std::{collections::{BinaryHeap, HashMap, HashSet}, sync::Mutex};
+use std::{collections::{BinaryHeap, HashMap, HashSet}, sync::Mutex, usize};
 
 use models::*;
+use crate::console_log;
 
 static MAP: Lazy<Mutex<Option<Vec<u8>>>> = Lazy::new(|| Mutex::new(None));
 static HEIGHT: Mutex<usize> = Mutex::new(0);
@@ -47,7 +48,8 @@ mod utils {
 }
 
 #[wasm_bindgen]
-pub fn set_map(map: Vec<u8>, height: usize, width: usize) {
+pub fn set_map(map: Vec<u8>, height: usize, width: usize) -> bool {
+    console_log!("{:?}, {height}, {width}", &map);
     {
         let mut map_lock = MAP.lock().unwrap();
         *map_lock = Some(map);
@@ -62,36 +64,47 @@ pub fn set_map(map: Vec<u8>, height: usize, width: usize) {
         let mut width_lock = WIDTH.lock().unwrap();
         *width_lock = width;
     }
+    true
 }
 
 #[wasm_bindgen]
-pub fn find_path(startx: usize, starty: usize, endx: usize, endy: usize) -> Vec<String> {
+pub fn find_path(startx: usize, starty: usize, endx: usize, endy: usize, mode: u8) -> Vec<String> {
     let start = Coord { x: startx, y: starty };
     let end = Coord { x: endx, y: endy };
-    let path = a_star_find_path(start, end);
-
+    let path = 
+    a_star_find_path(start, end, if mode == 4 {&Mode::Four} else {&Mode::Eight});
+    console_log!("{:?}", path);
     if let Some(path) = path {
-        path_to_moves(path)
+        path_to_instructions(path)
     } else {
         vec![]
     }
 }
 
 
-fn get_neighbors(coord: Coord) -> Vec<(Coord, u8)> {
+fn get_neighbors(coord: Coord, mode: &Mode) -> Vec<(Coord, u8)> {
     let height = *HEIGHT.lock().unwrap() as isize;
     let width = *WIDTH.lock().unwrap() as isize;
 
-    let directions = [
-        (-1, 0, 10), // left
-        (1, 0, 10),  // right
-        (0, -1, 10), // up
-        (0, 1, 10),  // down
-        (-1, -1, 14), // top-left
-        (1, -1, 14),  // top-right
-        (1, 1, 14),   // bottom-right
-        (-1, 1, 14),  // bottom-left
-        ];
+    let directions = 
+    match *mode {
+        Mode::Four => vec![
+            (-1, 0, 10), // left
+            (1, 0, 10),  // right
+            (0, -1, 10), // up
+            (0, 1, 10),  // down
+        ],
+        Mode::Eight => vec![
+            (-1, 0, 10), // left
+            (1, 0, 10),  // right
+            (0, -1, 10), // up
+            (0, 1, 10),  // down
+            (-1, -1, 14), // top-left
+            (1, -1, 14),  // top-right
+            (1, 1, 14),   // bottom-right
+            (-1, 1, 14),  // bottom-left
+        ]
+    };
         
     let mut neighbors = Vec::new();
 
@@ -112,7 +125,7 @@ fn get_neighbors(coord: Coord) -> Vec<(Coord, u8)> {
     neighbors
 }
 
-fn a_star_find_path(start: Coord, end: Coord) -> Option<Vec<Coord>> {
+fn a_star_find_path(start: Coord, end: Coord, mode: &Mode) -> Option<Vec<Coord>> {
     let mut open_set = BinaryHeap::new();
     let mut closed_set = HashSet::new();
     let mut parent_map: HashMap<Coord, Coord> = HashMap::new();
@@ -141,7 +154,7 @@ fn a_star_find_path(start: Coord, end: Coord) -> Option<Vec<Coord>> {
         closed_set.insert(current_tile.coord);
 
         // Explore neighbors and add to open_set
-        for (neighbor,cost) in get_neighbors(current_tile.coord) {
+        for (neighbor,cost) in get_neighbors(current_tile.coord, mode) {
             if closed_set.contains(&neighbor) {
                 continue;
             }
@@ -157,11 +170,51 @@ fn a_star_find_path(start: Coord, end: Coord) -> Option<Vec<Coord>> {
     None // No path found
 }
 
-fn path_to_moves(path: Vec<Coord>) -> Vec<String> {
+
+#[allow(dead_code)]
+fn path_to_coords(path: Vec<Coord>) -> Vec<String> {
     path
       .iter()
       .map(|coord| format!("{},{}", coord.x,coord.y))
       .collect::<Vec<String>>()
+}
+    
+fn path_to_instructions(path: Vec<Coord>) -> Vec<String> {
+    #[derive(Hash, PartialEq, Eq)]
+    struct Dir {
+        x: isize,
+        y: isize
+    }
+
+    // these are in array format, not image format
+    let directions = HashMap::from(
+        [
+            (Dir { x: 0, y: -1 }, "left".to_string()),
+            (Dir { x: 1, y: 0 }, "down".to_string()),
+            (Dir { x: 0, y: 1 }, "right".to_string()),
+            (Dir { x: -1, y: 0 }, "up".to_string()),
+            (Dir { x: -1, y: -1 }, "topleft".to_string()),
+            (Dir { x: 1, y: -1 }, "bottomleft".to_string()),
+            (Dir { x: -1, y: 1 }, "topright".to_string()),
+            (Dir { x: 1, y: 1 }, "bottomright".to_string()),
+        ]
+    );
+
+    let mut instructions: Vec<String> = vec![];
+
+    for (i, c) in path.iter().enumerate().take(path.len() - 1) {
+        let n = &path[i + 1];
+        let dir = Dir {
+            x: n.x as isize - c.x as isize,
+            y: n.y as isize - c.y as isize
+        };
+
+        if let Some(d) = directions.get(&dir) {
+            instructions.push(d.clone());
+        }
+    }
+
+    instructions
 }
 
 
@@ -177,7 +230,7 @@ fn path_to_moves(path: Vec<Coord>) -> Vec<String> {
 
 #[cfg(test)]
 mod test {
-    use crate::pathfinder::utils::is_valid_walkspace;
+    use crate::pathfinder::{path_to_instructions, utils::is_valid_walkspace, Mode};
 
     use super::{find_path, get_neighbors, set_map, Coord};
 
@@ -217,10 +270,26 @@ mod test {
             let y = (i * 3 + 1) % 6;
             //println!("{},{}", x, y);
 
-            let neighbors = get_neighbors(Coord {x, y});
+            let neighbors = get_neighbors(Coord {x, y}, &Mode::Eight);
             println!("{:#?}", neighbors);
             assert_eq!(neighbors.len(), e)
         }
+    }
+
+    #[test]
+    fn test_path_to_instructions() {
+        let path = vec![
+            Coord { x: 0, y: 0 },
+            Coord { x: 1, y: 0 },
+            Coord { x: 1, y: 1 },
+            Coord { x: 2, y: 1 },
+            Coord { x: 1, y: 1 },
+            Coord { x: 2, y: 2 },
+            Coord { x: 1, y: 3 },
+        ];
+
+        let instructions = path_to_instructions(path);
+        assert_eq!(instructions, vec!["right", "down", "right", "left", "bottomright", "bottomleft"]);
     }
 
     #[test]
@@ -231,7 +300,7 @@ mod test {
             2, 2, 2, 2,
         ];
         set_map(map,4, 4);
-        let moves = find_path(1, 1, 1, 2);
+        let moves = find_path(1, 1, 1, 2, 8);
         println!("{:?}", moves);
         assert!(moves.len() == 2)
     }
@@ -244,7 +313,7 @@ mod test {
             2, 2, 2, 2,
         ];
         set_map(map, 4, 4);
-        let moves = find_path(0, 1, 0, 2);
+        let moves = find_path(0, 1, 0, 2, 8);
         println!("{:?}", moves);
         assert!(moves.len() == 2)
     }
@@ -257,7 +326,7 @@ mod test {
             2, 2, 2, 2, 2, 2
         ];
         set_map(map, 3, 6);
-        let moves = find_path(1, 1, 1, 4);
+        let moves = find_path(1, 1, 1, 4, 8);
         println!("{:?}", moves);
         assert!(moves.len() == 4)
     }
@@ -270,7 +339,7 @@ mod test {
             2, 2, 2, 2, 2, 2
         ];
         set_map(map, 3, 6);
-        let moves = find_path(2, 1, 2, 4);
+        let moves = find_path(2, 1, 2, 4,8);
         println!("{:?}", moves);
         assert!(moves.len() != 0)
     }
@@ -285,7 +354,7 @@ mod test {
             2, 2, 2, 2, 2, 2, 2
         ];
         set_map(map, 5, 7);
-        let moves = find_path(2, 1, 2, 4);
+        let moves = find_path(2, 1, 2, 4, 8);
         println!("{:?}", moves);
         assert!(moves.len() != 0)
     }
@@ -299,7 +368,7 @@ mod test {
             6, 6, 6, 6, 6, 6, 6
         ];
         set_map(map, 5, 7);
-        let moves = find_path(2, 1, 2, 4);
+        let moves = find_path(2, 1, 2, 4, 8);
         println!("{:?}", moves);
         assert!(moves.len() != 0)
     }
@@ -314,7 +383,7 @@ mod test {
             2, 2, 2, 6, 2, 2, 2
         ];
         set_map(map, 5, 7);
-        let moves = find_path(3, 1, 3, 5);
+        let moves = find_path(3, 1, 3, 5, 8);
         println!("{:?}", moves);
         assert!(moves.len() != 0)
     }
@@ -329,7 +398,7 @@ mod test {
             2, 2, 2, 6, 2, 2, 2
         ];
         set_map(map, 5, 7);
-        let moves = find_path(3, 1, 3, 5);
+        let moves = find_path(3, 1, 3, 5, 8);
         println!("{:?}", moves);
         assert!(moves.len() != 0)
     }
@@ -344,7 +413,7 @@ mod test {
             2, 2, 2, 6, 2, 2, 2
         ];
         set_map(map, 5, 7);
-        let moves = find_path(3, 1, 2, 4);
+        let moves = find_path(3, 1, 2, 4, 8);
         println!("{:?}", moves);
         assert!(moves.len() != 0)
     }

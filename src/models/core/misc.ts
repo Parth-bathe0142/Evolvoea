@@ -58,6 +58,7 @@ export interface Puppet {
     beingControlled: boolean
     startBehavior(command: PuppetCommand): Promise<void>
     startWalk(dir: GridDirs): Promise<void>
+    startWalkTo(coord: Coord): Promise<void>
     startStand(dir: GridDirs, duration: number): Promise<void>
     startInteraction(): Promise<void>
 }

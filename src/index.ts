@@ -55,6 +55,8 @@ const { pause, play } = time.runLoop(update, render)!
 
 
 const scene = new Scene();
-setTimeout(() => {
-    scene.init();
+setTimeout(async() => {
+    await scene.time.delay(5)
+    scene.player.startWalkTo({ x: 11, y: 9 })
 }, 200);
+

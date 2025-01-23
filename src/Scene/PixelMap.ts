@@ -5,7 +5,7 @@ import { Tile } from "./Tile.js";
 /**
  * Stores an array of Tiles
  */
-interface Layer {
+export interface Layer {
     name: string
     tiles: Map<string, Tile> 
     collider: boolean // other data stored in the layer
@@ -23,38 +23,12 @@ interface JSONInput {
     }[]
 }
 
-export interface PixelMapi {
-    // height and width of the map
-    height: number
-    width: number
-
-    // rows and columns in the spritesheet
-    spritesheetRows: number
-    spritesheetCols: number
-
-    // object that stores all layers as an object 
-    // of format layername: layerobject
-    layers: { [key: string]: Layer }
-
-    // Images constructed from each layer stored as ImageData
-    // to draw to the canvas in bulk
-    layerImageData: { [key: string]: ImageData } | null
-
-    constructor(name: string): PixelMap // Creates a new PixelMap
-
-    initLayers(json: any): void // parses the json data into layers
-    initImageData(): void // creates images from Layers
-
-    updateImageData(layer: string): void // reconstructs images to show updated tiles
-    updateTile(coord: Coord, to: string): void // Makes changes in any layer, changing the id of any tile
-
-    getSpritesheetCoord(id: string): Coord // returns a coord corresponding to a tile id in json
-
-    drawLayer(ctx: CanvasRenderingContext2D, state: GameState, layer: string): void // draws given layer to the ctx
-}
 export class PixelMap {
     height: number = 0
     width: number = 0
+
+    name: string
+    isLoaded = false
 
     // rows and columns in the spritesheet
     spritesheetRows: number = 0
@@ -79,15 +53,31 @@ export class PixelMap {
         let json: JSONInput;
         this.spritesheetCols = spriteCols
         this.spritesheetRows = spriteRows
-
-        fetch(`assets/maps/${name}/map.json`)
-            .then(response => response.json())
-            .then(json => this.initLayer(json))
-            .catch(err => console.error("map not found: " + err))
-
-        this.spriteSheet.src = `assets/maps/${name}/spritesheet.png`
+        this.name = name
 
     }
+    
+    async load() {
+        return new Promise<void>(async (res, rej) => {
+            if(this.isLoaded) {
+                res()
+            }
+            let json
+            try {
+                const response = await fetch(`assets/maps/${this.name}/map.json`)
+                json = await response.json()
+            } catch (error) {
+                console.error("map not found")
+                rej()
+            }
+            this.initLayer(json)
+            this.spriteSheet.src = `assets/maps/${this.name}/spritesheet.png`
+            this.isLoaded = true
+
+            res()
+        })
+    }
+
     /**
      * Initialize each layer one by one using for of loop
      * @param json stores the Id, coordinates of x and y and the name of the layer
@@ -112,8 +102,6 @@ export class PixelMap {
                     { spritePos: this.getSpritesheetCoord(obj.id) }
                 )
             }
-            console.log(current);
-            
         }
     }
 
