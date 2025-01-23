@@ -1,12 +1,4 @@
-import { MovableObjectGrid } from "./models/core/MovableObject.js"
-import { Time } from "./models/core/Time.js"
-import { Camera } from "./models/core/Camera.js"
-import { PixelMap } from "./Scene/PixelMap.js"
-import { KeyInput } from "./models/core/KeyInput.js"
-import { Player } from "./models/characters/Player.js"
 import { Scene } from "./Scene/Scene.js"
-
-
 /*
 
 // HTML Element that supports drawing custom images
@@ -63,6 +55,8 @@ const { pause, play } = time.runLoop(update, render)!
 
 
 const scene = new Scene();
-setTimeout(() => {
-    scene.init();
+setTimeout(async() => {
+    await scene.time.delay(5)
+    scene.player.startWalkTo({ x: 11, y: 9 })
 }, 200);
+

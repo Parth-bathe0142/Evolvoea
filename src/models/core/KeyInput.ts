@@ -96,10 +96,14 @@ export class KeyInput {
             if(input == "interact") {
 
             } else {
-                await this.puppet?.startBehavior({
-                    action: "walk",
-                    direction: input as GridDirs
-                })
+                try {
+                    await this.puppet?.startBehavior({
+                        action: "walk",
+                        direction: input as GridDirs
+                    })
+                } catch (error) {
+                    this.inputQueue = []
+                }
             }         
         }
 

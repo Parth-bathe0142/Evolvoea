@@ -1,4 +1,4 @@
-import { Coord, FreeCollider } from "./misc.js";
+import { Coord, FreeCollider, GridDirs } from "./misc.js";
 import { MovableObjectFree } from "./MovableObject.js";
 
 /**
@@ -41,6 +41,34 @@ export const utils = {
         return Math.sqrt(dx * dx + dy * dy);
     },
 
+    coordToString(coord: Coord) {
+        return `${coord.x},${coord.y}`
+    },
+
+    stringToCoord(str: string) {
+        const nums = str.split(",").map(Number)
+        return { x: nums[0], y: nums[1] }
+    },
+
+    getNextCoord(curr: Coord, dir: GridDirs): Coord {
+        const next = { ...curr }
+        switch (dir) {
+            case "up":
+                next.y--
+                break;
+            case "right":
+                next.x++
+                break;
+            case "down":
+                next.y++
+                break;
+            case "left":
+                next.x--
+                break;
+        }
+        return next
+    },
+
     checkCollision(
         object1: FreeCollider,
         object2: FreeCollider,
@@ -48,5 +76,10 @@ export const utils = {
         let dist = this.getDistance(object1.drawPos, object2.drawPos)
 
         return dist <= (object1.radius + object2.radius)
+    },
+
+    pathToInstructions(path: string[]) {
+        let instructions: GridDirs[] = []
+        return instructions
     }
 }

@@ -3,8 +3,11 @@ import { Camera } from "../models/core/Camera.js"
 import { GameObject, GameObjectConfig } from "../models/core/GameObject.js"
 import { KeyInput } from "../models/core/KeyInput.js"
 import { Coord } from "../models/core/misc.js"
+import { PathFinder } from "../models/core/PathFinder.js"
 import { Time } from "../models/core/Time.js"
+import { utils } from "../models/core/utils.js"
 import { PixelMap } from "./PixelMap.js"
+
 
 export interface SceneJSON {
     objects: { [key: string]: GameObjectConfig }
@@ -42,6 +45,7 @@ export class Scene {
     time: Time
     camera: Camera
     keyInput: KeyInput
+    pathFinder: PathFinder
 
     isPaused: boolean
 
@@ -53,6 +57,7 @@ export class Scene {
         this.player = new Player({
             gridPos: { x: 5, y: 7 },
             name: "player",
+            scene: this,
             spriteConfig: {
                 src: "assets/spritesheets/character.png",
                 currentAnim: "idle-down"
@@ -64,15 +69,23 @@ export class Scene {
             object: this.player
         })
         this.keyInput = new KeyInput({ puppet: this.player })
+        this.pathFinder = new PathFinder()
+
         this.isPaused = false
 
+        this.load()
+    }
+
+    async load() {
+        await this.map.load()
+        const bmap = PathFinder.mapFromPixelMap(this.map)
+        this.pathFinder.setMap(bmap, this.map.height, this.map.width)
+        this.init()
     }
 
     update = () => {
         this.player.update()
         this.objects.forEach(object => object.update())
-        console.log("update");
-
     }
 
     render = () => {
@@ -104,19 +117,20 @@ export class Scene {
 
     togglePause() {
         if (this.isPaused) {
-            this.play!()
+            this.play?.()
             this.isPaused = false
         } else {
-            this.pause!()
+            this.pause?.()
             this.isPaused = true
         }
     }
 
-    isSpaceValid(coord: Coord) {
+    isSpaceValid(_coord: Coord) {
+        const coord = utils.coordToString(_coord)
+        
         if (this.map.layers["Ground"].tiles.has(coord) && !this.map.layers["main"].tiles.has(coord)) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
