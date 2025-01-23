@@ -1,18 +1,25 @@
 const { MongoClient } = require('mongodb')
-console.log(require('dotenv').config())
-const client = new MongoClient(process.env.CONNECTION_STRING);
-
-
-(async () => {
+require('dotenv').config()
+let client = new MongoClient(process.env.CONNECTION_STRING)
+let isConnected = false
+async function connectDB() {
     try {
-        await client.connect()
-        const accounts = client.db('game').collection('user_accounts');
-        const acc = await accounts.insertOne({ username: "suryansh", password: "12345678" })
-        console.log(acc)
-        
+        if (isConnected) {
+            return client
+        } else {
+            isConnected = true
+            await client.connect()
+            return client
+        }
     } catch (error) {
-        console.error(error);
-    } finally {
+        throw error
+    }
+}
+
+function closeDB() {
+    if (isConnected) {
         client.close()
     }
-})()
+}
+
+module.exports = { client, connectDB, closeDB }

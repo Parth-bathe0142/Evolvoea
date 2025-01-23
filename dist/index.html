@@ -1,15 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-        <link rel="stylesheet" type="text/css" href="styles/style.css">
-    </head>
-    <body>
-        <div id="game-container">
-            <canvas id="game-canvas" height="225" width="400"></canvas>
-        </div>
-    </body>
-    <script type="module" src="script/index.js"></script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="styles/style.css">
+</head>
+
+<body>
+    <div id="game-container">
+        <canvas id="game-canvas" height="225" width="400"></canvas>
+    </div>
+</body>
+<script type="module" src="script/index.js"></script>
+<script>
+    setTimeout(() => {
+        const body = {
+            username: "parth",
+            password: "1234"
+        }
+        fetch("/login_request", {
+            method: "post",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                username: "parth",
+                password: "1234"
+            })
+        })
+            .then(res => res.json())
+            .then(res => {
+                if (res.result == "success") {
+                    console.log("logged in");
+                } else {
+                    console.log("failure: " + res.reason);
+                }
+            })
+    }, 2000)
+</script>
+
 </html>
