@@ -9,6 +9,9 @@ const app = express()
 let client;
 
 app.use('/', express.static(path.join(__dirname, '../dist')))
+
+app.use("/dev-tools", express.static(path.join(__dirname, '../DevTools')))
+app.use("/dev-tools/scripts", express.static(path.join(__dirname, '../dist/script/DevTools')))
 app.use(express.json())
 
 app.get("/test", (_, res) => {
