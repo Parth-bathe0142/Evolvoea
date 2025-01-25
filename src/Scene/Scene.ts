@@ -8,29 +8,12 @@ import { Time } from "../models/core/Time.js"
 import { utils } from "../models/core/utils.js"
 import { PixelMap } from "./PixelMap.js"
 
-
-export interface SceneJSON {
-    objects: { [key: string]: GameObjectConfig }
-}
-
-export interface scene {
-    objects: GameObject[]
-    interactables: Map<Coord, GameObject>
-    player: Player
-    map: PixelMap
-    time: Time
-    camera: Camera
-
-    ispaused: boolean
-
-    load(): Promise<void>
-    init(): void
-    update(): void
-    render(): void
-    pause(): void
-    play(): void
-    togglePause(): boolean
-    isSpaceValid(coord: Coord): boolean
+interface SceneConfig {
+    mapConfig?: {
+        name: string
+        spritesheetSize: [number, number]
+    }
+    playerPos?: Coord
 }
 
 export class Scene {
