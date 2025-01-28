@@ -49,7 +49,7 @@ impl Tile {
         Tile {
             coord: coord.clone(),
             cost,
-            heur: Coord::distance_eu(&coord, &end) as f32
+            heur: Coord::distance_eu(&coord, &end) as f32 * 10.0
         }
     }
 }

@@ -15,15 +15,15 @@ mod utils {
     use super::{Coord, HEIGHT, MAP, WIDTH};
 
     pub fn get(coord: Coord) -> Option<u8> {
-        let x = coord.x;
-        let y = coord.y;
+        let x = coord.y;
+        let y = coord.x;
 
         let height = *HEIGHT.lock().unwrap();
         let width = *WIDTH.lock().unwrap();
         if x >= height || y >= width {
             None
         } else {
-            let vec = (MAP.lock().unwrap()).clone().unwrap();
+            let vec = (MAP.lock().unwrap().clone()).unwrap();
             let index = x * width + y;
             if index < vec.len() {
                 Some(vec[index])
@@ -49,7 +49,7 @@ mod utils {
 
 #[wasm_bindgen]
 pub fn set_map(map: Vec<u8>, height: usize, width: usize) -> bool {
-    console_log!("{:?}, {height}, {width}", &map);
+    visualise_map(&map, height, width);
     {
         let mut map_lock = MAP.lock().unwrap();
         *map_lock = Some(map);
@@ -65,6 +65,19 @@ pub fn set_map(map: Vec<u8>, height: usize, width: usize) -> bool {
         *width_lock = width;
     }
     true
+}
+
+fn visualise_map(map: &Vec<u8>, height: usize, width: usize) -> Vec<&str> {
+    let mapped: Vec<&str> = map
+      .into_iter()
+      .map(|&t| if utils::is_valid_walkspace(t) {" "} else {"#"})
+      .collect();
+
+    for i in 0..height {
+        let row = &mapped[(i * width)..(i * width + width)];
+        console_log!("{:?}{}",row.join(" "), i);
+    }
+    mapped
 }
 
 #[wasm_bindgen]
@@ -91,8 +104,8 @@ fn get_neighbors(coord: Coord, mode: &Mode) -> Vec<(Coord, u8)> {
         Mode::Four => vec![
             (-1, 0, 10), // left
             (1, 0, 10),  // right
-            (0, -1, 10), // up
             (0, 1, 10),  // down
+            (0, -1, 10), // up
         ],
         Mode::Eight => vec![
             (-1, 0, 10), // left

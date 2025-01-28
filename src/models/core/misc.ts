@@ -31,7 +31,9 @@ export interface BoundingBox {
 export interface AnimFrame {
     frame: Coord 
     offset?: Coord
+    flip?: boolean
     duration?: number
+    image?: string
 }
 
 /** An object passed around during update and render */
@@ -45,6 +47,11 @@ export interface PuppetCommand {
     direction: GridDirs
     duration?: number
     retry?: boolean
+}
+
+export interface Save {
+    toJSON(): void
+    fromJSOM(): void
 }
 
 /**

@@ -29,6 +29,7 @@ app.get("/game", (_, res) => {
 })
 
 app.post("/login_request", async (req, res) => {
+    client = await connectDB()
     const { username, password } = req.body
     const accounts = client.db('game').collection('user_accounts')
 
@@ -41,7 +42,6 @@ app.post("/login_request", async (req, res) => {
 })
 
 app.listen(port, async () => {
-    client = await connectDB()
     console.log(`Listening at http://localhost:${port}`)
     console.log(`Open game page at http://localhost:${port}/game`)
 })

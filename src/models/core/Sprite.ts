@@ -41,6 +41,15 @@ export class Sprite {
         }
     }
 
+    private static getImage(src: string, def: string) {
+        if(this.imageCache.has(src)) {
+            return this.imageCache.get(src)!.img
+        } else {
+            this.addImage(src)
+            return this.imageCache.get(def)!.img
+        }
+    }
+
     src: string
     img: HTMLImageElement | null = null
     spritePadding = { width: 0, height: 0 }
@@ -100,6 +109,10 @@ export class Sprite {
             this.currentAnimFrame %= this.animations[this.currentAnim].length
             
             this.animProgress = this.frame.duration ?? DEFAULT_ANIM_DURATION
+            let newimg = this.animations[this.currentAnim][0].image
+            if(newimg) {
+                this.img = Sprite.getImage(newimg, this.src)
+            }
         }
     }
 
@@ -124,14 +137,23 @@ export class Sprite {
                 dy += cameraOffset.y
             }
 
-            const sx = frame.frame.x * (this.cropSize.width + this.spritePadding.width)
-            const sy = frame.frame.y * (this.cropSize.height + this.spritePadding.height)
+            const sx = frame.frame.x * 
+                        (this.cropSize.width + this.spritePadding.width) + 
+                        (frame.flip ? this.drawSize.width : 0)
+            const sy = frame.frame.y * 
+                        (this.cropSize.height + this.spritePadding.height) +
+                        (frame.flip ? this.drawSize.height : 0)
+
+            const cropSize = {
+                width: this.cropSize.width * (frame.flip ? -1 : 1),
+                height: this.cropSize.height
+            }
 
             // draws one cropped part of the image at the location of the game object
             ctx.drawImage(
                 this.img!,                                   // image to draw from
                 sx, sy,                                      // crop top left
-                this.cropSize.width, this.cropSize.height,   // crop width and height
+                cropSize.width, cropSize.height,             // crop width and height
                 dx, dy,                                      // draw top left
                 this.drawSize.width, this.drawSize.height    // draw width and height
             )

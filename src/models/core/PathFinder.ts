@@ -21,7 +21,7 @@ export class PathFinder {
 
                 for(const [coordStr, _] of layer.tiles) {
                     const { x, y } = utils.stringToCoord(coordStr);
-                    const index = (x * pix.width) + y
+                    const index = (y * pix.width) + x   // image indexing
 
                     if (index >= 0 && index < map.length) {
                         map[index] += bit

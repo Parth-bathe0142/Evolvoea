@@ -1,3 +1,5 @@
+import { GridCharacterConfig } from "../models/characters/GridCharacter.js"
+import { GridSlime, GridSlimeConfig } from "../models/characters/npcs/GridSlime.js"
 import { Player } from "../models/characters/Player.js"
 import { Camera } from "../models/core/Camera.js"
 import { GameObject, GameObjectConfig } from "../models/core/GameObject.js"
@@ -14,6 +16,7 @@ interface SceneConfig {
         spritesheetSize: [number, number]
     }
     playerPos?: Coord
+    Characters?: ["person" | "slime", GridSlimeConfig][]
 }
 
 export class Scene {
@@ -21,7 +24,7 @@ export class Scene {
     ctx: CanvasRenderingContext2D
     canvas: HTMLCanvasElement
 
-    objects: GameObject[] = []
+    characters: GameObject[] = []
     interactables: Map<Coord, GameObject>
     player: Player
     map: PixelMap
@@ -32,13 +35,13 @@ export class Scene {
 
     isPaused: boolean
 
-    constructor() {
+    constructor(config: SceneConfig) {
         this.canvas = document.getElementById("game-canvas")! as HTMLCanvasElement
         this.ctx = this.canvas.getContext("2d")!
-        this.objects = []
+        this.characters = []
         this.interactables = new Map<Coord, GameObject>
         this.player = new Player({
-            gridPos: { x: 5, y: 7 },
+            gridPos: config.playerPos ?? { x: 5, y: 7 },
             name: "player",
             scene: this,
             spriteConfig: {
@@ -56,19 +59,28 @@ export class Scene {
 
         this.isPaused = false
 
-        this.load()
+        this.load(config)
     }
 
-    async load() {
+    async load(config: SceneConfig) {
+
         await this.map.load()
         const bmap = PathFinder.mapFromPixelMap(this.map)
         this.pathFinder.setMap(bmap, this.map.height, this.map.width)
+
+        config.Characters?.forEach(([type, conf]) => {
+            conf.scene = this
+            switch(type) {
+                case "slime":
+                    this.characters.push(new GridSlime(conf as GridSlimeConfig))
+            }
+        })
         this.init()
     }
 
     update = () => {
         this.player.update()
-        this.objects.forEach(object => object.update())
+        this.characters.forEach(object => object.update())
     }
 
     render = () => {
@@ -82,7 +94,7 @@ export class Scene {
         this.map.drawLayer(this.ctx, gameState, "Water");
         this.map.drawLayer(this.ctx, gameState, "Ground");
         this.map.drawLayer(this.ctx, gameState, "main");
-        for (const object of this.objects) {
+        for (const object of this.characters) {
             object.sprite.draw(this.ctx, gameState)
         }
         this.player.sprite.draw(this.ctx, gameState)
@@ -118,8 +130,15 @@ export class Scene {
         }
     }
 
+    getCharacterById(id: number | string): GameObject | null {
+        for(const obj of this.characters) {
+            if(obj.id == id) {
+                return obj
+            }
+        }
 
-
+        return null
+    }
 }
 
 

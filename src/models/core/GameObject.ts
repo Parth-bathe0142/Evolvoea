@@ -11,7 +11,7 @@ import { utils } from "./utils.js"
 export interface GameObjectConfig {
     drawPos?: Coord,
     spriteConfig: SpriteConfig
-    id?: number
+    id?: number | string
 }
 
 /**
@@ -20,12 +20,19 @@ export interface GameObjectConfig {
  */
 export abstract class GameObject {
 
-    id: number
+    id: number | string
     drawPos: Coord = { x: 0, y: 0 }
     sprite: Sprite
 
     constructor(config: GameObjectConfig) {
-        this.id = config.id ? idGenerator.bookId(config.id) : idGenerator.generateNewId()
+        if(config.id) {
+            this.id = config.id
+            if(typeof config.id == 'number') {
+                idGenerator.bookId(config.id)
+            }
+        } else {
+            this.id = idGenerator.generateNewId()
+        }
         this.drawPos = config.drawPos || { x: 0, y: 0 }
 
         config.spriteConfig.gameObject = this

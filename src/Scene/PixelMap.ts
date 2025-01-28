@@ -124,10 +124,10 @@ export class PixelMap {
             ctx.drawImage(
                 this.spriteSheet,
                 tile.spritePos.x, tile.spritePos.y,
-                16, 16,
+                15, 15,
 
                 drawPos.x, drawPos.y,
-                16, 16
+                15, 15
             )
         }
     }

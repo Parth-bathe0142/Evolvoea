@@ -1,12 +1,11 @@
 import { Coord, GridDirs, Puppet, PuppetCommand } from "../core/misc.js";
-import { utils } from "../core/utils.js";
-import { Person, PersonConfig } from "./people/Person.js";
+import { GridCharacter, GridCharacterConfig } from "./GridCharacter.js";
 
-export interface PlayerConfig extends PersonConfig {
+export interface PlayerConfig extends GridCharacterConfig {
 
 }
 
-export class Player extends Person implements Puppet {
+export class Player extends GridCharacter {
     facing: GridDirs = 'down'
     beingControlled: boolean = false
 
@@ -74,81 +73,7 @@ export class Player extends Person implements Puppet {
         super(config)
     }
 
-    async startBehavior(command: PuppetCommand): Promise<void> {
-        return new Promise<void>(async (resolve, reject) => {
-            if(this.beingControlled) {
-                reject()
-                return
-            }
-            switch (command.action) {
-                case "walk":
-                    const next = utils.getNextCoord(this.gridPos, command.direction)
-                    if(this.scene.isSpaceValid(next)) {
-                        await this.startWalk(command.direction)
-                        resolve()
-                    } else {
-                        reject()
-                    }
-                break
-            
-                case "stand":
-                    await this.startStand(command.direction, command.duration!)
-                    resolve()
-                break
-            }
-        })
-    }
-
-    startWalk(dir: GridDirs): Promise<void> {
-        return new Promise<void>((res) => {
-            this.facing = dir
-            this.makeMove(dir, res)
-        })
-    }
-
-    startWalkTo(coord: Coord): Promise<void> {
-        return new Promise<void>(async (res, rej) => {
-
-            if(this.gridPos.x == coord.x && this.gridPos.y == coord.y) {
-                res()
-            } else {
-                try {
-                    const path = this.scene.pathFinder.findPath(
-                        this.gridPos.x,
-                        this.gridPos.y,
-                        coord.x,
-                        coord.y,
-                        4
-                    )
-                    if(path.length != 0) {
-                        for(const inst of path as GridDirs[]) {
-                            await this.startWalk(inst)
-                        }
-                        res()
-                    } else { 
-                        rej()
-                    }
-                } catch (error) {
-                    rej()
-                }
-            }
-
-        })
-    }
-
-    startStand(dir: GridDirs, duration: number): Promise<void> {
-        return new Promise<void>(async res => {
-            this.facing = dir
-            await this.scene.time.delay(duration)
-            res()
-        })
-    }
-
-    startInteraction(): Promise<void> {
-        return new Promise<void>((res) => {
-
-        })
-    }
+    
 
     makeMove(to: GridDirs, resolve?: () => void): void {
         super.makeMove(to, resolve)

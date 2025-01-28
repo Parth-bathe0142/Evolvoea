@@ -14,31 +14,4 @@
     </div>
 </body>
 <script type="module" src="script/index.js"></script>
-<script>
-    setTimeout(() => {
-        const body = {
-            username: "parth",
-            password: "1234"
-        }
-        fetch("/login_request", {
-            method: "post",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                username: "parth",
-                password: "1234"
-            })
-        })
-            .then(res => res.json())
-            .then(res => {
-                if (res.result == "success") {
-                    console.log("logged in");
-                } else {
-                    console.log("failure: " + res.reason);
-                }
-            })
-    }, 2000)
-</script>
-
 </html>
