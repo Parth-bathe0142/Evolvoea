@@ -14,7 +14,7 @@ const scene = new Scene({
 });
 setTimeout(async() => {
     await scene.player.startWalkTo({ x: 4, y: 7 });  
-    await scene.time.delay(5);
+    await scene.time.delay(2);
     (scene.getCharacterById("slime1") as GridCharacter).startWalkTo({ x: 6, y: 15 })
 }, 800);
 

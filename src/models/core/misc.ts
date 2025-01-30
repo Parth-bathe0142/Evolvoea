@@ -83,6 +83,7 @@ export interface FreeCollider {
 
 export type GridDirs = "up" | "right" | "down" | "left" | "none"
 export type SlimeType = "melee" | "ranged"
+export type teams = "team1" | "team2"
 
 /** Default assumed size of each sprite in any spritesheet, there will be several exceptions */
 export const CROP_SIZE = { width: 16, height: 16 }
@@ -92,3 +93,5 @@ export const DRAW_SIZE = { width: 16, height: 16 }
 
 /** The duration for frames for whome duration is not mentioned */
 export const DEFAULT_ANIM_DURATION = 6
+
+export const PROJECTILE_RADIUS = 8

@@ -143,7 +143,7 @@ fn a_star_find_path(start: Coord, end: Coord, mode: &Mode) -> Option<Vec<Coord>>
     let mut closed_set = HashSet::new();
     let mut parent_map: HashMap<Coord, Coord> = HashMap::new();
 
-    open_set.push(Tile::new_path(start, 0, end));
+    open_set.push(Tile::new_path(start, 0, end, mode));
 
     while let Some(current_tile) = open_set.pop() {
         if current_tile.coord == end {
@@ -176,7 +176,7 @@ fn a_star_find_path(start: Coord, end: Coord, mode: &Mode) -> Option<Vec<Coord>>
                 parent_map.insert(neighbor.clone(), current_tile.coord.clone());
             }
 
-            open_set.push(Tile::new_path(neighbor, current_tile.cost + cost, end));
+            open_set.push(Tile::new_path(neighbor, current_tile.cost + cost, end, mode));
         }
     }
 
@@ -198,17 +198,17 @@ fn path_to_instructions(path: Vec<Coord>) -> Vec<String> {
         x: isize,
         y: isize
     }
-
-    // these are in array format, not image format
+    
+    // these are in image format, not array format
     let directions = HashMap::from(
         [
-            (Dir { x: 0, y: -1 }, "left".to_string()),
-            (Dir { x: 1, y: 0 }, "down".to_string()),
-            (Dir { x: 0, y: 1 }, "right".to_string()),
-            (Dir { x: -1, y: 0 }, "up".to_string()),
+            (Dir { x: 0, y: -1 }, "up".to_string()),
+            (Dir { x: 1, y: 0 }, "right".to_string()),
+            (Dir { x: 0, y: 1 }, "down".to_string()),
+            (Dir { x: -1, y: 0 }, "left".to_string()),
             (Dir { x: -1, y: -1 }, "topleft".to_string()),
-            (Dir { x: 1, y: -1 }, "bottomleft".to_string()),
-            (Dir { x: -1, y: 1 }, "topright".to_string()),
+            (Dir { x: 1, y: -1 }, "topright".to_string()),
+            (Dir { x: -1, y: 1 }, "bottomleft".to_string()),
             (Dir { x: 1, y: 1 }, "bottomright".to_string()),
         ]
     );

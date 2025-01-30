@@ -64,17 +64,17 @@ export class Scene {
 
     async load(config: SceneConfig) {
 
-        await this.map.load()
-        const bmap = PathFinder.mapFromPixelMap(this.map)
-        this.pathFinder.setMap(bmap, this.map.height, this.map.width)
-
+        
         config.Characters?.forEach(([type, conf]) => {
             conf.scene = this
             switch(type) {
                 case "slime":
                     this.characters.push(new GridSlime(conf as GridSlimeConfig))
-            }
+                }
         })
+        await this.map.load()
+        const bmap = PathFinder.mapFromPixelMap(this.map)
+        this.pathFinder.setMap(bmap, this.map.height, this.map.width)
         this.init()
     }
 

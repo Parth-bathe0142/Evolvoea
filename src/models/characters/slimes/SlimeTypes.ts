@@ -1,5 +1,5 @@
-import { Attack } from "../../core/misc.js";
 import { utils } from "../../core/utils.js";
+import { BaseProjectileConfig } from "../../projectiles/BaseProjectile.js";
 import { Slime, SlimeConfig } from "./Slime.js";
 
 export interface MeleeSlimeConfig extends SlimeConfig {
@@ -17,7 +17,7 @@ export class MeleeSlime extends Slime {
     }
 
     decision(): void {
-        const enemyTeam = this.team == 1 ? this.arena.team2 : this.arena.team1
+        const enemyTeam = this.arena.getOtherTeam(this.team)
         let closest = enemyTeam[0]
         let distance = utils.getDistance(this.drawPos, closest.drawPos)
 
@@ -28,11 +28,13 @@ export class MeleeSlime extends Slime {
                 distance = newDist
             }
         })
+        this.targetEnemy = closest
 
         if(distance < this.range) {
             if(this.moving) {
                 this.stop()
             }
+
             if(this.currentAction == "attack") {
 
             } else {
@@ -45,12 +47,70 @@ export class MeleeSlime extends Slime {
     }
 
     async attack(): Promise<void> {
-        this.currentAction = "attack"
-        while(true) {
-            if(this.isAlive && this.currentAction == "attack" && this.targetEnemy?.isAlive) {
-                this.targetEnemy.takeDamage({ type: "normal", damage: this.damage })
-            }
-            await this.arena.time.delay(this.attackSpeed)
+        if(this.targetEnemy?.isAlive) {
+            this.targetEnemy.takeDamage({ type: "normal", damage: this.damage })
+        } else {
+            this.currentAction = "idle"
         }
     }   
+}
+
+export interface RangedSlimeConfig extends SlimeConfig {
+    range: number
+    projectileConfig: BaseProjectileConfig
+}
+
+export class RangedSlime extends Slime {
+    range: number
+    projectileConfig: BaseProjectileConfig
+
+    constructor(config: RangedSlimeConfig) {
+        super(config)
+
+        this.range = config.range
+        this.projectileConfig = config.projectileConfig
+    }
+
+    update(): void {
+        super.update()
+    }
+
+    decision(): void {
+        const enemyTeam = this.arena.getOtherTeam(this.team)
+        let closest = enemyTeam[0]
+        let distance = utils.getDistance(this.drawPos, closest.drawPos)
+
+        enemyTeam.forEach(en => {
+            let newDist = utils.getDistance(this.drawPos, en.drawPos)
+            if(newDist < distance) {
+                closest = en
+                distance = newDist
+            }
+        })
+        this.targetEnemy = closest
+
+        if(distance < this.range) {
+            if(this.moving) {
+                this.stop()
+            }
+
+            if(this.currentAction == "attack") {
+
+            } else {
+                this.attack()
+            }
+        } else {
+            this.currentAction = "chase"
+            this.moveTowards(closest.drawPos)
+        }
+    }
+
+    async attack(): Promise<void> {
+        if(this.targetEnemy?.isAlive) {
+            this.targetEnemy.takeDamage({ type: "normal", damage: this.damage })
+        } else {
+            this.currentAction = "idle"
+        }
+    }
+    
 }
