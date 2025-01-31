@@ -1,0 +1,157 @@
+/* Global Styles */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #ebae74, #e5b2ac);
+    text-align: center;
+}
+
+/* Navbar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #fff;
+    padding: 15px 50px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    flex-wrap: wrap;
+    /* Allows items to wrap if needed */
+}
+
+/* Logo */
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Navigation Links */
+.nav-links {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+    /* Prevents overflow */
+}
+
+.nav-links li {
+    margin: 0 15px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+    transition: 0.3s ease;
+    padding: 8px;
+}
+
+.nav-links a:hover {
+    color: #28a745;
+}
+
+/* Auth Links (Login & Signup) */
+.auth-links {
+    display: flex;
+    flex-wrap: wrap;
+    /* Ensures they don’t overflow */
+}
+
+.auth-links a {
+    text-decoration: none;
+    margin-left: 15px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: 0.3s ease;
+    white-space: nowrap;
+    /* Prevents text wrapping */
+}
+
+.login-btn {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.login-btn:hover {
+    background: #ddd;
+}
+
+.signup-btn {
+    background: #28a745;
+    color: white;
+}
+
+.signup-btn:hover {
+    background: #218838;
+}
+
+/* Hero Section */
+.hero {
+    margin-top: 100px;
+    padding: 100px 20px;
+    color: white;
+}
+
+.hero h1 {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.hero p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+.cta-button {
+    padding: 12px 24px;
+    background: #ff7f50;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 8px;
+    transition: 0.3s ease;
+}
+
+.cta-button:hover {
+    background: #ff6347;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        padding: 15px;
+    }
+
+    .nav-links {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+
+    .nav-links li {
+        margin-bottom: 10px;
+    }
+
+    .auth-links {
+        margin-top: 10px;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .auth-links a {
+        width: 80%;
+        text-align: center;
+        margin: 5px 0;
+    }
+}

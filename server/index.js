@@ -19,7 +19,7 @@ app.get("/test", (_, res) => {
 })
 
 app.get("/game", (_, res) => {
-    const filePath = path.join(__dirname, "../dist/index.html")
+    const filePath = path.join(__dirname, "../dist/public/index.html")
     res.sendFile(filePath, (err) => {
         if (err) {
             console.error("File sending error:", err.message)
@@ -39,6 +39,14 @@ app.post("/login_request", async (req, res) => {
     } else {
         res.json({ result: "failure", reason: "Incorrect username/password" })
     }
+})
+
+app.post("/signup_request", async (req, res) => {
+    client = await connectDB()
+    const { username, password, email } = req.body
+    const accounts = client.db('game').collection('user_accounts')
+
+
 })
 
 app.listen(port, async () => {
