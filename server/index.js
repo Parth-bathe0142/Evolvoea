@@ -1,5 +1,6 @@
 const express = require("express")
 const path = require("path")
+const bcrypt = require('bcrypt')
 const { connectDB, closeDB } = require('./mongoClient.js')
 require('dotenv').config()
 
@@ -28,25 +29,49 @@ app.get("/game", (_, res) => {
     })
 })
 
-app.post("/login_request", async (req, res) => {
-    client = await connectDB()
-    const { username, password } = req.body
-    const accounts = client.db('game').collection('user_accounts')
-
-    const match = await accounts.findOne({ username, password })
-    if (match) {
-        res.json({ result: "success" })
-    } else {
-        res.json({ result: "failure", reason: "Incorrect username/password" })
-    }
-})
-
 app.post("/signup_request", async (req, res) => {
     client = await connectDB()
     const { username, password, email } = req.body
     const accounts = client.db('game').collection('user_accounts')
 
+    try {
+        const match = await accounts.findOne({ username })
+        if (match) {
+            res.json({ result: "Failure", reason: "User already exist" })
+        }
+        else {
+            const saltRound = 10 //Higher number == More secure
+            const hashedPassword = await bcrypt.hash(password, saltRound) //Creates the hash of password 
 
+            await accounts.insertOne({ username, password: hashedPassword, email })
+            res.json({ result: "Success" })
+        }
+    } catch (error) {
+        console.error("Signup error:", error)
+        res.json({ result: "Failure", reason: "Internal server error" })
+    }
+})
+
+app.post("/login_request", async (req, res) => {
+    client = await connectDB()
+    const { username, password } = req.body
+    const accounts = client.db('game').collection('user_accounts')
+
+    try {
+        const user = await accounts.findOne({ username })
+        if (!user) {
+            return res.json({ result: "failure", reason: "Incorrect username/password" })
+        }
+        const isMatch = await bcrypt.compare(password, user.password)
+        if (!isMatch) {
+            return res.json({ result: "faliure", reason: "Incorrect username/password" })
+        }
+
+        res.json({ result: "Success" })
+    } catch (error) {
+        console.log("Login error : ", error)
+        res.json({ result: "faliure", reason: "Internal server error" })
+    }
 })
 
 app.listen(port, async () => {

@@ -6,13 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Signup Page</title>
     <link rel="stylesheet" href="../styles/style.css">
+    <script>
+        function validateForm(event) {
+            // Prevent form submission
+            event.preventDefault();
+
+            // Get password and confirm password values
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+
+            // Check if passwords match
+            if (password !== confirmPassword) {
+                alert("Passwords do not match. Please try again.");
+                return false; // Prevent form submission
+            }
+
+            // If passwords match, submit the form
+            document.getElementById('signup-form').submit();
+        }
+    </script>
 </head>
 
 <body>
 
     <div class="signup-container">
-        <h1>Signup Page</h1>
-        <form action="/signup_request" method="post">
+        <h2>Signup Page</h2>
+        <form id="signup-form" action="/signup_request" method="post" onsubmit="validateForm(event)">
             <label for="name">Full Name:</label>
             <input type="text" id="name" name="name" required>
 
@@ -25,7 +44,7 @@
             <label for="confirm-password">Confirm Password:</label>
             <input type="password" id="confirm-password" name="confirm-password" required>
 
-            <button type="submit">Sign Up</button>
+            <input type="submit" value="Sign Up">
         </form>
     </div>
 
