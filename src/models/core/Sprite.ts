@@ -127,36 +127,38 @@ export class Sprite {
         if(this.imgLoaded) {
             const drawPos = this.gameObject.drawPos
             const frame = this.frame
-
-            let dx = drawPos.x + this.drawOffset.x + (frame.offset?.x ?? 0)
+            
+            let dx = drawPos.x + this.drawOffset.x + ((frame.offset?.x ?? 0) * (frame.flip?-1:1))
             let dy = drawPos.y + this.drawOffset.y + (frame.offset?.y ?? 0)
-
+            
             if(state.camera) {
                 const cameraOffset = state.camera.offset
                 dx += cameraOffset.x
                 dy += cameraOffset.y
             }
 
-            const sx = frame.frame.x * 
-                        (this.cropSize.width + this.spritePadding.width) + 
-                        (frame.flip ? this.drawSize.width : 0)
-            const sy = frame.frame.y * 
-                        (this.cropSize.height + this.spritePadding.height) +
-                        (frame.flip ? this.drawSize.height : 0)
-
-            const cropSize = {
-                width: this.cropSize.width * (frame.flip ? -1 : 1),
-                height: this.cropSize.height
+            if(frame.flip) {
+                ctx.save()
+                ctx.scale(-1, 1)
+                dx = -(dx + this.drawSize.width);
             }
+            
+            const sx = frame.frame.x * 
+                        (this.cropSize.width + this.spritePadding.width)
+            const sy = frame.frame.y * 
+                        (this.cropSize.height + this.spritePadding.height)
 
-            // draws one cropped part of the image at the location of the game object
             ctx.drawImage(
-                this.img!,                                   // image to draw from
-                sx, sy,                                      // crop top left
-                cropSize.width, cropSize.height,             // crop width and height
-                dx, dy,                                      // draw top left
-                this.drawSize.width, this.drawSize.height    // draw width and height
+                this.img!,
+                sx, sy,
+                this.cropSize.width, this.cropSize.height,
+                dx, dy,
+                this.drawSize.width, this.drawSize.height
             )
+
+            if(frame.flip) {
+                ctx.restore()
+            }
         }
     }
 }

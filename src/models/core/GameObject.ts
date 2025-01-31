@@ -23,6 +23,7 @@ export abstract class GameObject {
     id: number | string
     drawPos: Coord = { x: 0, y: 0 }
     sprite: Sprite
+    isValid: boolean = true
 
     constructor(config: GameObjectConfig) {
         if(config.id) {
@@ -48,5 +49,6 @@ export abstract class GameObject {
 
     destroy() {
         this.sprite.destroy()
+        this.isValid = false
     }
 }

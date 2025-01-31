@@ -2,7 +2,7 @@ import { Arena } from "../../../battle/Arena.js";
 import { GameObjectConfig } from "../../core/GameObject.js";
 import { MovableObjectFree } from "../../core/MovableObject.js";
 import { SpriteConfig } from "../../core/Sprite.js";
-import { Attack, FreeCollider } from "../../core/misc.js";
+import { Attack, FreeCollider, teams } from "../../core/misc.js";
 
 export interface SlimeConfig extends Omit<GameObjectConfig, "spriteConfig"> {
     radius?: number
@@ -13,7 +13,7 @@ export interface SlimeConfig extends Omit<GameObjectConfig, "spriteConfig"> {
     attackSpeed: number
     speed: number
     arena: Arena
-    team: 1 | 2
+    team: teams
     spriteConfig?: SpriteConfig
 }
 
@@ -24,8 +24,6 @@ export interface SlimeConfig extends Omit<GameObjectConfig, "spriteConfig"> {
  * the grid can be made with the Person class
  */
 export abstract class Slime extends MovableObjectFree implements FreeCollider {
-    static decisionRate = 15 // makes a decision once every x updates
-
     radius: number = 16
     type: string
     maxHealth: number // the whole health
@@ -37,9 +35,12 @@ export abstract class Slime extends MovableObjectFree implements FreeCollider {
 
     targetEnemy: Slime | null = null
     currentAction: "idle" | "attack" | "flee" | "chase" = "idle"
-    team: 1 | 2
+    team: teams
     isAlive: boolean = true
-    private tick: number = 0
+    private decisionCooldown: number = 0
+    decisionRate = 15
+    private attackCooldown: number = 0
+    attackRate = 20
 
     // does not come from config, any subclass with implemented behavior will set it to true
     // used to play post death animations or effects
@@ -77,23 +78,30 @@ export abstract class Slime extends MovableObjectFree implements FreeCollider {
     abstract attack(): void
 
     update() {
+        super.update()
+        
         if(!this.isAlive) {
             if(!this.actingAfterDeath) {
                 return
             }
         }
 
-        super.update()
 
-        if(this.health <= 0) {
+        if(this.health <= 0 && this.isAlive) {
             this.death()
             return
         }
 
-        this.tick++
-        if(this.tick >= Slime.decisionRate) {
-            this.tick = 0
+        this.decisionCooldown++
+        if(this.decisionCooldown >= this.decisionRate && this.isAlive) {
+            this.decisionCooldown = 0
             this.decision()
+        }
+
+        this.attackCooldown++
+        if(this.attackCooldown >= this.attackRate && this.isAlive && this.currentAction == "attack") {
+            this.attackCooldown = 0
+            this.attack()
         }
     }
 

@@ -1,4 +1,4 @@
-import { AnimFrame, Coord, Save } from "../../core/misc.js";
+import { AnimFrame, Coord, GridDirs, Save } from "../../core/misc.js";
 import { SpriteConfig } from "../../core/Sprite.js";
 import { GridCharacter, GridCharacterConfig } from "../GridCharacter.js";
 
@@ -33,7 +33,7 @@ export class GridSlime extends GridCharacter {
                 { frame: { x: 9, y } },
                 { frame: { x: 10, y } },
             ],
-            "move-left": [
+            "walk-left": [
                 { frame: { x: 0, y }, image: "assets/spritesheets/slimes/slime_move.png", flip: true },
                 { frame: { x: 1, y }, flip: true },
                 { frame: { x: 2, y }, flip: true },
@@ -42,7 +42,7 @@ export class GridSlime extends GridCharacter {
                 { frame: { x: 5, y }, flip: true },
                 { frame: { x: 6, y }, flip: true },
             ],
-            "move-right": [
+            "walk-right": [
                 { frame: { x: 0, y }, image: "assets/spritesheets/slimes/slime_move.png" },
                 { frame: { x: 1, y } },
                 { frame: { x: 2, y } },
@@ -86,5 +86,24 @@ export class GridSlime extends GridCharacter {
 
         this.index = config.index
         this.spawnPoint = config.spawnPoint
+    }
+
+    makeMove(to: GridDirs, resolve?: () => void): void {
+        super.makeMove(to, resolve)
+        const mapping = {
+            "up": "walk-left",
+            "right": "walk-right",
+            "down": "walk-right",
+            "left": "walk-left",
+            "none": "idle"
+        }
+        this.sprite.currentAnimation = mapping[to]
+    }
+
+    stop() {
+        super.stop()
+        setTimeout(() => {
+            !this.movingTo && (this.sprite.currentAnimation = `idle-${this.facing}`)
+        }, 10);
     }
 }

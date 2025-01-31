@@ -156,6 +156,15 @@ export class MovableObjectFree extends GameObject {
         this.targetPos = to
     }
 
+    moveBeyond(to: Coord, on: "grid" | "free" = "free") {
+        const end = {
+            x: to.x * 10,
+            y: to.y * 10
+        }
+
+        this.moveTowards(end, on)
+    }
+
     /**
      * Terminates the movement behavior, can also
      * interrupt it if called explicitly. Converts
