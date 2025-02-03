@@ -40,7 +40,7 @@ app.post("/signup_request", async (req, res) => {
             res.json({ result: "Failure", reason: "User already exist" })
         }
         else {
-            const saltRound = 10 //Higher number == More secure
+            const saltRound = 10 //Higher number = More secure
             const hashedPassword = await bcrypt.hash(password, saltRound) //Creates the hash of password 
 
             await accounts.insertOne({ username, password: hashedPassword, email })
