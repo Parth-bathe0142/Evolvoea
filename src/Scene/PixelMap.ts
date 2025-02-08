@@ -7,7 +7,7 @@ import { Tile } from "./Tile.js";
  */
 export interface Layer {
     name: string
-    tiles: Map<string, Tile> 
+    tiles: Map<string, Tile>
     collider: boolean // other data stored in the layer
 }
 
@@ -15,7 +15,7 @@ interface JSONInput {
     tileSize: number
     mapWidth: number
     mapHeight: number
-    
+
     layers: {
         name: string
         tiles: { id: string, x: number, y: number }[]
@@ -56,22 +56,22 @@ export class PixelMap {
         this.name = name
 
     }
-    
+
     async load() {
         return new Promise<void>(async (res, rej) => {
-            if(this.isLoaded) {
+            if (this.isLoaded) {
                 res()
             }
             let json
             try {
-                const response = await fetch(`assets/maps/${this.name}/map.json`)
+                const response = await fetch(`../assets/maps/${this.name}/map.json`)
                 json = await response.json()
             } catch (error) {
                 console.error("map not found")
                 rej()
             }
             this.initLayer(json)
-            this.spriteSheet.src = `assets/maps/${this.name}/spritesheet.png`
+            this.spriteSheet.src = `../assets/maps/${this.name}/spritesheet.png`
             this.isLoaded = true
 
             res()

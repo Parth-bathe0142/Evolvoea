@@ -45,7 +45,7 @@ export class Scene {
             name: "player",
             scene: this,
             spriteConfig: {
-                src: "assets/spritesheets/character.png",
+                src: "../assets/spritesheets/character.png",
                 currentAnim: "idle-down"
             }
         })

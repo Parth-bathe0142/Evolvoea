@@ -1,6 +1,7 @@
 const express = require("express")
 const path = require("path")
 const bcrypt = require('bcrypt')
+const bodyParser = require('body-parser')
 const { connectDB, closeDB } = require('./mongoClient.js')
 require('dotenv').config()
 
@@ -14,6 +15,10 @@ app.use('/', express.static(path.join(__dirname, '../dist')))
 app.use("/dev-tools", express.static(path.join(__dirname, '../DevTools')))
 app.use("/dev-tools/scripts", express.static(path.join(__dirname, '../dist/script/DevTools')))
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+//app.use(bodyParser)
+
+
 
 app.get("/test", (_, res) => {
     res.json({ result: "success" })
@@ -40,11 +45,14 @@ app.post("/signup_request", async (req, res) => {
             res.json({ result: "Failure", reason: "User already exist" })
         }
         else {
-            const saltRound = 10 //Higher number = More secure
-            const hashedPassword = await bcrypt.hash(password, saltRound) //Creates the hash of password 
+            // const saltRound = 10 //Higher number = More secure
+            // const hashedPassword = await bcrypt.hash(password, saltRound) //Creates the hash of password 
 
-            await accounts.insertOne({ username, password: hashedPassword, email })
-            res.json({ result: "Success" })
+            await accounts.insertOne({ username, password, email })
+            
+            res.cookie("username", username, { maxAge: 20 * 1000 })
+            //res.json({ result: "Success" })
+            res.redirect("/public/home.html")
         }
     } catch (error) {
         console.error("Signup error:", error)
@@ -60,14 +68,16 @@ app.post("/login_request", async (req, res) => {
     try {
         const user = await accounts.findOne({ username })
         if (!user) {
-            return res.json({ result: "failure", reason: "Incorrect username/password" })
+            return res.json({ result: "failure", reason: "User not found" })
         }
-        const isMatch = await bcrypt.compare(password, user.password)
+        const isMatch = (password == user.password)
         if (!isMatch) {
             return res.json({ result: "faliure", reason: "Incorrect username/password" })
         }
 
-        res.json({ result: "Success" })
+        res.cookie("username", username, { maxAge: 20 * 1000 })
+        //res.json({ result: "Success" })
+        res.redirect("/public/home.html")
     } catch (error) {
         console.log("Login error : ", error)
         res.json({ result: "faliure", reason: "Internal server error" })

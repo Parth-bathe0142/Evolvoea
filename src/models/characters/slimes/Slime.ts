@@ -48,7 +48,7 @@ export abstract class Slime extends MovableObjectFree implements FreeCollider {
 
     constructor(config: SlimeConfig) {
         config.spriteConfig = {
-            src: "assets/spritesheets/slimes/all_slime_sprites.png",
+            src: "../assets/spritesheets/slimes/all_slime_sprites.png",
             drawOffset: { x: 34, y: 42},
             cropSize: { width: 80, height: 72 },
             drawSize: { width: 80, height: 72 },

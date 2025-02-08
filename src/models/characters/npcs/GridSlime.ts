@@ -12,7 +12,7 @@ export class GridSlime extends GridCharacter {
     static getAnimations(y: number): { [key: string]: AnimFrame[] } {
         return {
             "idle": [
-                { frame: { x: 0, y }, image: "assets/spritesheets/slimes/slime_idle2.png" },
+                { frame: { x: 0, y }, image: "../assets/spritesheets/slimes/slime_idle2.png" },
                 { frame: { x: 1, y } },
                 { frame: { x: 2, y } },
                 { frame: { x: 3, y } },
@@ -21,7 +21,7 @@ export class GridSlime extends GridCharacter {
                 { frame: { x: 6, y } },
             ],
             "jump": [
-                { frame: { x: 0, y }, image: "assets/spritesheets/slimes/slime_jump.png" },
+                { frame: { x: 0, y }, image: "../assets/spritesheets/slimes/slime_jump.png" },
                 { frame: { x: 1, y } },
                 { frame: { x: 2, y } },
                 { frame: { x: 3, y } },
@@ -34,7 +34,7 @@ export class GridSlime extends GridCharacter {
                 { frame: { x: 10, y } },
             ],
             "walk-left": [
-                { frame: { x: 0, y }, image: "assets/spritesheets/slimes/slime_move.png", flip: true },
+                { frame: { x: 0, y }, image: "../assets/spritesheets/slimes/slime_move.png", flip: true },
                 { frame: { x: 1, y }, flip: true },
                 { frame: { x: 2, y }, flip: true },
                 { frame: { x: 3, y }, flip: true },
@@ -43,7 +43,7 @@ export class GridSlime extends GridCharacter {
                 { frame: { x: 6, y }, flip: true },
             ],
             "walk-right": [
-                { frame: { x: 0, y }, image: "assets/spritesheets/slimes/slime_move.png" },
+                { frame: { x: 0, y }, image: "../assets/spritesheets/slimes/slime_move.png" },
                 { frame: { x: 1, y } },
                 { frame: { x: 2, y } },
                 { frame: { x: 3, y } },
@@ -52,7 +52,7 @@ export class GridSlime extends GridCharacter {
                 { frame: { x: 6, y } },
             ],
             "die": [
-                { frame: { x: 0, y }, image: "assets/spritesheets/slimes/slime_move.png" },
+                { frame: { x: 0, y }, image: "../assets/spritesheets/slimes/slime_move.png" },
                 { frame: { x: 1, y } },
                 { frame: { x: 2, y } },
                 { frame: { x: 3, y } },
@@ -74,7 +74,7 @@ export class GridSlime extends GridCharacter {
     
     constructor(config: GridSlimeConfig) {
         config.spriteConfig = {
-            src: "assets/spritesheets/slimes/slime_idle2.png",
+            src: "../assets/spritesheets/slimes/slime_idle2.png",
             drawSize: { width: 80, height: 72 },
             cropSize: { width: 80, height: 72 },
             drawOffset: { x: -26, y: -32},

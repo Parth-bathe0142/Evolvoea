@@ -3,11 +3,14 @@
 
 /* Global Styles */
 body {
-    font-family: 'Press Start 2P', cursive; /* Retro Gaming Font */
+    font-family: 'Press Start 2P', cursive;
+    /* Retro Gaming Font */
     margin: 0;
     padding: 0;
-    background: #2c2c2c; /* Light shade of black */
-    color: #fff; /* White text for contrast */
+    background: #2c2c2c;
+    /* Light shade of black */
+    color: #fff;
+    /* White text for contrast */
     text-align: center;
 }
 
@@ -16,9 +19,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(0, 0, 0, 0.8); /* Semi-transparent black for a gaming feel */
-    padding: 10px 20px; /* Adjusted padding for a cleaner look */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+    background: rgba(0, 0, 0, 0.8);
+    /* Semi-transparent black for a gaming feel */
+    padding: 10px 20px;
+    /* Adjusted padding for a cleaner look */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    /* Subtle shadow */
     position: fixed;
     width: 100%;
     top: 0;
@@ -30,7 +36,8 @@ body {
 .logo {
     font-size: 26px;
     font-weight: bold;
-    color: #ffcc00; /* Golden color for premium gaming feel */
+    color: #ffcc00;
+    /* Golden color for premium gaming feel */
     text-shadow: 2px 2px 10px #ffcc00;
 }
 
@@ -43,7 +50,8 @@ body {
 }
 
 .nav-links li {
-    margin: 0 15px; /* Adjusted margin for better spacing */
+    margin: 0 15px;
+    /* Adjusted margin for better spacing */
 }
 
 .nav-links a {
@@ -55,19 +63,22 @@ body {
 }
 
 .nav-links a:hover {
-    color: #ff4500; /* Fire-like hover effect */
+    color: #ff4500;
+    /* Fire-like hover effect */
     text-shadow: 0px 0px 10px #ff4500;
 }
 
 /* Auth Buttons */
 .auth-links {
     display: flex;
-    gap: 10px; /* Adjusted gap for better spacing */
-    margin-left: 20px; /* Add margin to the left to bring buttons in */
+    gap: 10px;
+    /* Adjusted gap for better spacing */
+    margin-left: 20px;
+    /* Add margin to the left to bring buttons in */
 }
 
 /* Login Button */
-.login-btn {
+#login-btn {
     background: #222;
     color: #ffcc00;
     border: 2px solid #ffcc00;
@@ -77,24 +88,25 @@ body {
     transition: 0.3s ease;
 }
 
-.login-btn:hover {
+#login-btn:hover {
     background: #ffcc00;
     color: #000;
 }
 
 /* Sign Up Button - Gaming Glow */
-.signup-btn {
+#signup-btn {
     background: #ff4500;
     color: white;
     border: 2px solid #ffcc00;
-    padding: 10px 15px; /* Adjusted padding for consistency */
+    padding: 10px 15px;
+    /* Adjusted padding for consistency */
     font-weight: bold;
     border-radius: 6px;
     text-shadow: 0 0 10px rgba(255, 69, 0, 0.8);
     transition: 0.3s ease;
 }
 
-.signup-btn:hover {
+#signup-btn:hover {
     background: #ffcc00;
     color: #000;
     text-shadow: 0 0 20px rgba(255, 255, 0, 0.8);
@@ -140,12 +152,19 @@ body {
     background: #ffcc00;
 }
 
-.logout-button {
-    background-color: red; /* Red background for logout button */
-    color: white; /* White text */
-    border: none; /* No border */
-    padding: 10px; /* Padding for button */
-    border-radius: 5px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    font-size: 18px; /* Font size for button */
+#logout-btn {
+    background-color: red;
+    /* Red background for logout button */
+    color: white;
+    /* White text */
+    border: none;
+    /* No border */
+    padding: 10px;
+    /* Padding for button */
+    border-radius: 5px;
+    /* Rounded corners */
+    cursor: pointer;
+    /* Pointer cursor on hover */
+    font-size: 18px;
+    /* Font size for button */
 }
