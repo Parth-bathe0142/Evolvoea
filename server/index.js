@@ -18,6 +18,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 //app.use(bodyParser)
 
+app.get("/leaderboard-page", (_, res) => {
+    res.sendFile(path.join(__dirname, "../dist/public/leaderboard.html"));
+});
 
 
 app.get("/test", (_, res) => {
@@ -38,6 +41,8 @@ app.post("/signup_request", async (req, res) => {
     client = await connectDB()
     const { username, password, email } = req.body
     const accounts = client.db('game').collection('user_accounts')
+    let randomnumber = Math.floor(Math.random() * (9000 + 1) + 1000)
+
 
     try {
         const match = await accounts.findOne({ username })
@@ -48,8 +53,8 @@ app.post("/signup_request", async (req, res) => {
             // const saltRound = 10 //Higher number = More secure
             // const hashedPassword = await bcrypt.hash(password, saltRound) //Creates the hash of password 
 
-            await accounts.insertOne({ username, password, email })
-            
+            await accounts.insertOne({ username, password, email, randomnumber })
+
             res.cookie("username", username, { maxAge: 20 * 1000 })
             //res.json({ result: "Success" })
             res.redirect("/public/home.html")
@@ -84,8 +89,21 @@ app.post("/login_request", async (req, res) => {
     }
 })
 
+app.get("/leaderboard", async (req, res) => {
+    client = await connectDB();
+    const accounts = client.db('game').collection('user_accounts');
+
+    try {
+        const users = await accounts.find().sort({ randomnumber: -1 }).toArray();
+        res.json(users);
+    } catch (error) {
+        console.error("Leaderboard fetch error:", error);
+        res.status(500).json({ result: "Failure", reason: "Internal server error" });
+    }
+});
+
 app.listen(port, async () => {
-    console.log(`Listening at http://localhost:${port}`)
+    console.log(`Listening at http://localhost:${port}/public/home.html`)
     console.log(`Open game page at http://localhost:${port}/game`)
 })
 

@@ -1,0 +1,84 @@
+/* Importing the pixelated font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Global Styles */
+body {
+    font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    padding: 0;
+    background: #2c2c2c;
+    color: #fff;
+    text-align: center;
+}
+
+/* Leaderboard Container */
+.leaderboard-container {
+    margin-top: 120px;
+    padding: 40px 20px;
+}
+
+/* Title */
+.leaderboard-title {
+    font-size: 32px;
+    color: #ffcc00;
+    text-shadow: 3px 3px 10px rgba(255, 255, 0, 1);
+    margin-bottom: 30px;
+}
+
+/* Table Styles */
+.leaderboard-table {
+    width: 80%;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Table Header */
+.leaderboard-table th {
+    background: #ff4500;
+    color: white;
+    padding: 15px;
+    font-size: 16px;
+    border: 2px solid #ffcc00;
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Table Rows */
+.leaderboard-table td {
+    background: #222;
+    color: #ffcc00;
+    padding: 12px;
+    font-size: 14px;
+    border: 2px solid #ffcc00;
+    text-align: center;
+}
+
+/* Make sure columns are properly spaced */
+.leaderboard-table th,
+.leaderboard-table td {
+    width: 25%;
+}
+
+/* Hover Effect */
+.leaderboard-table tbody tr:hover {
+    background: #ffcc00;
+    color: black;
+    transition: 0.3s ease;
+}
+
+/* Logout Button */
+#logout-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+#logout-btn:hover {
+    background-color: #ff4500;
+}
