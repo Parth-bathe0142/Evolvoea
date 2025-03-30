@@ -1,4 +1,4 @@
-import { AnimFrame, Coord, GridDirs, Save } from "../../core/misc.js";
+import { AnimFrame, Coord, DEFAULT_ANIM_DURATION, GridDirs, Save } from "../../core/misc.js";
 import { SpriteConfig } from "../../core/Sprite.js";
 import { GridCharacter, GridCharacterConfig } from "../GridCharacter.js";
 
@@ -71,6 +71,9 @@ export class GridSlime extends GridCharacter {
 
     index: number
     spawnPoint: Coord
+    isAlive = true
+    // deadUpdates = 13 * DEFAULT_ANIM_DURATION
+    maxSteps = 24
     
     constructor(config: GridSlimeConfig) {
         config.spriteConfig = {
@@ -86,6 +89,38 @@ export class GridSlime extends GridCharacter {
 
         this.index = config.index
         this.spawnPoint = config.spawnPoint
+
+        const walkListener = (e: any) => {
+            if(this.isAlive) {
+
+                if(e.details?.who == this.id) {
+                    let chance = Math.random()
+                    if(chance < 0.50)
+                        this.followPlayer()
+                }
+            }
+        }
+        document.addEventListener("complete-walk", walkListener)
+        this.eventListeners.set("complete-walk", walkListener)
+        
+    }
+
+    update(): void {
+        super.update()
+
+        if(this.isAlive) {
+            if(!this.movingTo) {
+                this.followPlayer()
+            }
+        }
+    }
+
+    followPlayer() {
+        const playerPos = this.scene.player.gridPos
+        if(!this.movingTo) {
+            this.startWalkTo(playerPos)
+        }
+            
     }
 
     makeMove(to: GridDirs, resolve?: () => void): void {
@@ -98,12 +133,26 @@ export class GridSlime extends GridCharacter {
             "none": "idle"
         }
         this.sprite.currentAnimation = mapping[to]
+
+        if(mapping[to] == "walk-left") {
+            this.sprite.drawOffset = { x: -36, y: -32}  
+        } else {
+            this.sprite.drawOffset = { x: -26, y: -32}
+        }
     }
 
     stop() {
         super.stop()
         setTimeout(() => {
             !this.movingTo && (this.sprite.currentAnimation = `idle-${this.facing}`)
-        }, 10);
+        }, 10)
+    }
+
+    die() {
+        this.stop()
+        this.sprite.currentAnimation = "die"
+        this.isAlive = false
+        this.scene.characters = this.scene.characters.filter(o => o !== this)
+        this.destroy()
     }
 }

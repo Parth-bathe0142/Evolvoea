@@ -13,7 +13,8 @@ export interface MovableObjectGridConfig extends GameObjectConfig {
  * that cannot be walked into
  */
 export class MovableObjectGrid extends GameObject { 
-    gridPos: Coord  
+    gridPos: Coord
+    maxSteps = 16
     steps = 0
     direction: GridDirs = "none"
     movingTo: Coord | null = null
@@ -40,22 +41,26 @@ export class MovableObjectGrid extends GameObject {
         } else {
             switch (this.direction) {
                 case "up":
-                    this.drawPos.y--
+                    this.drawPos.y -= 16 / this.maxSteps
                 break;
                 case "right":
-                    this.drawPos.x++
+                    this.drawPos.x+= 16 / this.maxSteps
                 break;
                 case "down":
-                    this.drawPos.y++
+                    this.drawPos.y+= 16 / this.maxSteps
                 break;
                 case "left":
-                    this.drawPos.x--
+                    this.drawPos.x-= 16 / this.maxSteps
                 break;
             }
                     
             this.steps--
             if(this.steps == 0) {
                 this.stop()
+                this.drawPos = {
+                    x: Math.round(this.drawPos.x),
+                    y: Math.round(this.drawPos.y)
+                }
             }
         }
     }
@@ -71,7 +76,7 @@ export class MovableObjectGrid extends GameObject {
         this.moveResolve = resolve ?? null
         if(this.direction == "none" && this.steps == 0) {
             this.direction = to
-            this.steps = 16
+            this.steps = this.maxSteps
             switch(to) {
                 case "up":
                     this.movingTo = { x: this.gridPos.x, y: this.gridPos.y - 1 }
@@ -86,6 +91,13 @@ export class MovableObjectGrid extends GameObject {
                     this.movingTo = { x: this.gridPos.x - 1, y: this.gridPos.y }
                 break;
             }
+        } else {
+            document.dispatchEvent(new CustomEvent(
+                "complete-walk",
+                { detail: {
+                    who: this.id
+                } }
+            ))
         }
     }
 

@@ -49,7 +49,7 @@ mod utils {
 
 #[wasm_bindgen]
 pub fn set_map(map: Vec<u8>, height: usize, width: usize) -> bool {
-    visualise_map(&map, height, width);
+    // visualise_map(&map, height, width);
     {
         let mut map_lock = MAP.lock().unwrap();
         *map_lock = Some(map);
@@ -67,6 +67,7 @@ pub fn set_map(map: Vec<u8>, height: usize, width: usize) -> bool {
     true
 }
 
+#[allow(dead_code)]
 fn visualise_map(map: &Vec<u8>, height: usize, width: usize) -> Vec<&str> {
     let mapped: Vec<&str> = map
       .into_iter()
@@ -86,7 +87,7 @@ pub fn find_path(startx: usize, starty: usize, endx: usize, endy: usize, mode: u
     let end = Coord { x: endx, y: endy };
     let path = 
     a_star_find_path(start, end, if mode == 4 {&Mode::Four} else {&Mode::Eight});
-    console_log!("{:?}", path);
+    // console_log!("{:?}", path);
     if let Some(path) = path {
         path_to_instructions(path)
     } else {

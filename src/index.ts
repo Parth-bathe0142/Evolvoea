@@ -1,20 +1,30 @@
-import { GridCharacter } from "./models/characters/GridCharacter.js";
-import { Scene } from "./Scene/Scene.js"
+import { Scene, SceneConfig } from "./Scene/Scene.js"
+import { ui } from "./ui.js";
 
-const scene = new Scene({
-    playerPos: { x: 4, y: 8 },
-    Characters: [
-        ["slime", {
-            spawnPoint: { x: 4, y: 4 },
-            index: 2,
-            name: "slime1",
-            id: "slime1"
-        }]
-    ]
-});
-setTimeout(async() => {
-    await scene.player.startWalkTo({ x: 4, y: 7 });  
-    await scene.time.delay(2);
-    (scene.getCharacterById("slime1") as GridCharacter).startWalkTo({ x: 6, y: 15 })
-}, 800);
+const titleScreen = document.getElementById("title-screen")!
+const replayScreen = document.getElementById("replay-screen")!
+
+ui.goToScreen("title-screen")
+
+document.querySelector("#title-screen_button")?.addEventListener("click", async e => {
+    runGame()
+    ui.goToScreen("")
+})
+
+document.querySelector("#replay-screen_button_return")?.addEventListener("click", async e => {
+    ui.goToScreen("title-screen")
+})
+document.querySelector("#replay-screen_button_replay")?.addEventListener("click", async e => {
+    ui.goToScreen("")
+})
+
+async function runGame() {
+    const response = await fetch("/assets/demo_scenes/scenes.json")
+    const json = await response.json()
+    
+    const scenes = Object.keys(json)
+    const randomScene = scenes[Math.floor(scenes.length * Math.random())]
+    
+    const scene = new Scene(json[randomScene] as SceneConfig)
+}
 

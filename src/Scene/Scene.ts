@@ -1,6 +1,6 @@
-import { GridCharacterConfig } from "../models/characters/GridCharacter.js"
 import { GridSlime, GridSlimeConfig } from "../models/characters/npcs/GridSlime.js"
 import { Player } from "../models/characters/Player.js"
+import { Slime } from "../models/characters/slimes/Slime.js"
 import { Camera } from "../models/core/Camera.js"
 import { GameObject, GameObjectConfig } from "../models/core/GameObject.js"
 import { KeyInput } from "../models/core/KeyInput.js"
@@ -10,13 +10,15 @@ import { Time } from "../models/core/Time.js"
 import { utils } from "../models/core/utils.js"
 import { PixelMap } from "./PixelMap.js"
 
-interface SceneConfig {
+export interface SceneConfig {
     mapConfig?: {
         name: string
         spritesheetSize: [number, number]
+        goal: Coord
     }
     playerPos?: Coord
     Characters?: ["person" | "slime", GridSlimeConfig][]
+    randomSpawns?: number
 }
 
 export class Scene {
@@ -49,7 +51,15 @@ export class Scene {
                 currentAnim: "idle-down"
             }
         })
-        this.map = new PixelMap("example_map", 6, 8)
+
+        if(config.mapConfig) {
+            this.map = new PixelMap(
+                config.mapConfig.name,
+                ...config.mapConfig.spritesheetSize
+            )
+        } else {
+            this.map = new PixelMap("example_map", 6, 8)
+        }
         this.time = new Time(48)
         this.camera = new Camera({
             object: this.player
@@ -62,7 +72,7 @@ export class Scene {
         this.load(config)
     }
 
-    async load(config: SceneConfig) {
+    private async load(config: SceneConfig) {
 
         
         config.Characters?.forEach(([type, conf]) => {
@@ -75,12 +85,34 @@ export class Scene {
         await this.map.load()
         const bmap = PathFinder.mapFromPixelMap(this.map)
         this.pathFinder.setMap(bmap, this.map.height, this.map.width)
+        
+        if(config.randomSpawns) {
+            for(let i = 1; i <= config.randomSpawns; i++) {
+                this.spawnRandomSlime()
+                console.log("attempt");
+            }
+        }
         this.init()
     }
 
     update = () => {
         this.player.update()
-        this.characters.forEach(object => object.update())
+        let newSpawns = 0;
+        this.characters.forEach(object => {
+            object.update()
+
+            if(object instanceof GridSlime) {
+                if(utils.getDistance(object.gridPos, this.player.gridPos) < 1.5) {
+                    object.die()
+                    newSpawns++
+                }
+            }
+        })
+        for(let i = 0; i < newSpawns; i++) this.spawnRandomSlime()
+
+        if(utils.getDistance(this.player.gridPos, this.map.goal) < 1) {
+
+        }
     }
 
     render = () => {
@@ -101,7 +133,7 @@ export class Scene {
         this.map.drawLayer(this.ctx, gameState, "Roof");
     }
 
-    init() {
+    private init() {
         const { pause, play } = this.time.runLoop(this.update, this.render)!
         this.pause = pause
         this.play = play
@@ -138,6 +170,29 @@ export class Scene {
         }
 
         return null
+    }
+
+
+    spawnRandomSlime() {
+        const playerPos = this.player.gridPos
+
+        const randomPos = {
+            x: Math.floor(Math.random() * this.map.width),
+            y: Math.floor(Math.random() * this.map.width)
+        }
+        for(let trial = 0; trial < 500; trial++) {
+            if(utils.getDistance(playerPos, randomPos) > 5) {
+                if(this.isSpaceValid(randomPos)) {
+                    this.characters.push(new GridSlime({
+                        name: "",
+                        spawnPoint: randomPos,
+                        index: Math.floor(Math.random() * 7),
+                        scene: this
+                    }))
+                    break
+                }
+            }
+        }
     }
 }
 

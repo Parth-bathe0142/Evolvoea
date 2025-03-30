@@ -24,6 +24,7 @@ export abstract class GameObject {
     drawPos: Coord = { x: 0, y: 0 }
     sprite: Sprite
     isValid: boolean = true
+    eventListeners: Map<string, EventListener> = new Map()
 
     constructor(config: GameObjectConfig) {
         if(config.id) {
@@ -50,5 +51,9 @@ export abstract class GameObject {
     destroy() {
         this.sprite.destroy()
         this.isValid = false
+
+        for(const [string, listener] of this.eventListeners) {
+            document.removeEventListener(string, listener)
+        }
     }
 }

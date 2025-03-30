@@ -94,7 +94,7 @@ export class GridCharacter extends MovableObjectGrid implements Puppet {
                     )
                     if(path.length != 0) {
                         for(const inst of path as GridDirs[]) {
-                            await this.startWalk(inst)
+                            this.isValid && await this.startWalk(inst)
                         }
                         console.log(this.gridPos);
                         
