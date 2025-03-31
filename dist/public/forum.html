@@ -1,102 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forum Page</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .container {
-            width: 60%;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .post {
-            border-bottom: 1px solid #ddd;
-            padding: 15px 0;
-        }
-
-        .post:last-child {
-            border-bottom: none;
-        }
-
-        .post h3 {
-            margin: 0;
-            color: #333;
-        }
-
-        .post p {
-            margin: 5px 0;
-            color: #666;
-        }
-
-        .form-group {
-            margin: 15px 0;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin: 5px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="container">
-        <h1>Forum</h1>
-
-        <div class="post">
-            <h3>User123</h3>
-            <p>This is a sample forum post. What do you think?</p>
-        </div>
-        <div class="post">
-            <h3>GamerX</h3>
-            <p>Awesome! Looking forward to more discussions.</p>
-        </div>
-
-        <h2>Add a Post</h2>
-        <form>
-            <div class="form-group">
-                <input type="text" placeholder="Your Name" required>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Home</title>
+        <link rel="stylesheet" href="../styles/home_style.css">
+        <link rel="stylesheet" href="../styles/forum_style.css">
+    </head>
+    <body>
+        <nav class="navbar">
+            <div class="logo">EVOLVOEA</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Game</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="leaderboard.html">LeaderBoard</a></li>
+                <li><a href="forum.html">Forum</a></li>
+            </ul>
+            <div class="auth-links">
+                <a href="login.html" id="login-btn">Login</a>
+                <a href="signup.html" id="signup-btn">Sign Up</a>
+                <button id="logout-btn">Logout</button>
+                <script>
+                    let isLoggedIn = false;
+    
+                    // Function to update button visibility
+                    function updateButtonVisibility() {
+                        const loginButton = document.getElementById('login-btn');
+                        const signupButton = document.getElementById('signup-btn');
+                        const logoutButton = document.getElementById('logout-btn');
+    
+                        if (isLoggedIn) {
+                            loginButton.style.display = 'none'; // Hide login button
+                            signupButton.style.display = 'none'; // Hide signup button
+                            logoutButton.style.display = 'inline-block'; // Show logout button
+                        } else {
+                            loginButton.style.display = 'inline-block'; // Show login button
+                            signupButton.style.display = 'inline-block'; // Show signup button
+                            logoutButton.style.display = 'none'; // Hide logout button
+                        }
+                    }
+                    const main = async () => {
+                        const response = await fetch("/pageload");
+                        const json = await response.json()
+                        if(json.result == "success") {
+                            isLoggedIn = true;
+                            updateButtonVisibility()
+                        }
+                    }
+                    main()
+                </script>
             </div>
-            <div class="form-group">
-                <textarea placeholder="Write your post here..." rows="4" required></textarea>
-            </div>
-            <button type="submit">Post</button>
-        </form>
-    </div>
-</body>
+        </nav>
+        <br>
+        <br>
+        <br>
+        <div id="main">
+            <br>
+            <br>
+            <br>
+        
+            <main>
+                <h2>Active forums: <button id="new-forum" onclick="newForum()">+</button></h2>
+                <div id="forum-list"></div>
+                <h2>Posts: <button id="new-post" onclick="newPost()" disabled>+</button></h2>
+                <div id="post-list"></div>
+                <script>
+                    async function updateForumList() {
+                        const response = await fetch("/forum-list")
+                        if(response.ok) {
+                            let data = await response.json()
+                            document.getElementById("forum-list")
+                              .innerHTML = data.elements;
+                            
+                            for(const elem of document.getElementsByClassName("forum-item")) {
+                                elem.addEventListener("click", function (e) {
+                                    const id = elem.id
 
+                                    for(const others of document.getElementsByClassName("forum-item")) {
+                                        others.classList.remove("selected")
+                                    }
+                                    elem.classList.add("selected")
+
+                                    updatePosts(id)
+                                })
+                            }  
+                        }
+                    }
+                     updateForumList()
+
+                    let displayedForum;
+                    async function updatePosts(forumid) {
+                        if(isLoggedIn)
+                            document.getElementById("new-post").disabled = false
+
+                        displayedForum = forumid
+                        const response = await fetch(`/forum/${forumid}`)
+                        if(response.ok) {
+                            const data = await response.json()
+
+                            document.getElementById("post-list").innerHTML = data.elements
+                        }
+                    } 
+
+                    async function newForum() {
+                        const newname = prompt("Ener the name of your forum: ")
+
+                        if(!newname) return
+                        const response = await fetch("/new-forum", {
+                            method: "post",
+                            headers: {
+                                'Content-Type': "application/json"
+                            },
+                            body: JSON.stringify({
+                                name: newname
+                            })
+                        })
+
+                        if(response.ok) {
+                            updateForumList()
+                        }
+                    }
+                    
+                    async function newPost() {
+                        const newpost = prompt("Ener the message for your post: ")
+    
+                        if(!newpost) return
+                        const response = await fetch("/new-post", {
+                            method: "post",
+                            headers: {
+                                'Content-Type': "application/json"
+                            },
+                            body: JSON.stringify({
+                                message: newpost,
+                                forum: displayedForum
+                            })
+                        })
+    
+                        if(response.ok) {
+                            updatePosts(displayedForum)
+                        }
+                    }
+                </script>
+            </main>
+        </div>
+    </body>
 </html>

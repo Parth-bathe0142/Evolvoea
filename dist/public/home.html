@@ -50,14 +50,15 @@
                         logoutButton.style.display = 'none'; // Hide logout button
                     }
                 }
-                let username;
-                if (username = getCookie("username")) {
-                    isLoggedIn = true;
-                    updateButtonVisibility();
-                } else {
-                    isLoggedIn = false;
-                    updateButtonVisibility();
+                const main = async () => {
+                    const response = await fetch("/pageload");
+                    const json = await response.json()
+                    if(json.result == "success") {
+                        isLoggedIn = true;
+                        updateButtonVisibility()
+                    }
                 }
+                main()
             </script>
         </div>
     </nav>
