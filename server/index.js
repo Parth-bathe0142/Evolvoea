@@ -47,12 +47,6 @@ app.get("/game", (_, res) => {
 })
 
 
-
-
-
-
-
-
 app.post("/signup_request", async (req, res) => {
     client = await connectDB()
     const { username, password, email } = req.body
@@ -105,11 +99,6 @@ app.post("/login_request", async (req, res) => {
         res.redirect("/public/login.html?error=Internal server error");
     }
 });
-
-
-
-
-
 
 
 
