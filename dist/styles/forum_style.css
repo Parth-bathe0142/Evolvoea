@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    background-color: #1a1a1a; /* Dark background */
+    color: white;
+    font-family: 'Press Start 2P', cursive; /* Pixel-style font */
+    text-align: center;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: black;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    color: yellow;
+    font-size: 24px;
+    text-shadow: 0px 0px 10px yellow;
+}
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    display: flex;
+}
+
+.nav-links li {
+    margin: 0 15px;
+}
+
+.nav-links a {
+    color: yellow;
+    text-decoration: none;
+    font-size: 16px;
+    text-shadow: 0px 0px 5px yellow;
+}
+
+/* Authentication Buttons */
+.auth-links a {
+    color: yellow;
+    padding: 5px 10px;
+    border: 2px solid yellow;
+    border-radius: 5px;
+    text-decoration: none;
+    text-shadow: 0px 0px 5px yellow;
+}
+
+.auth-links a:hover {
+    background-color: yellow;
+    color: black;
+}
+
+/* Main Forum Section */
+#main {
+    padding: 20px;
+    margin-top: 50px;
+}
+
+/* Forum Headers */
+h2 {
+    color: yellow;
+    text-shadow: 0px 0px 8px yellow;
+}
+
+/* Buttons */
+button {
+    background-color: #ff6600;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    text-shadow: 0px 0px 5px white;
+    box-shadow: 0px 0px 10px #ff6600;
+}
+
+button:hover {
+    background-color: #ff4500;
+}
+
+/* Forum List */
+#forum-list, #post-list {
+    text-align: left;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    margin: auto;
+    width: 60%;
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.2);
+}
+
+/* Forum Items */
+.forum-item {
+    padding: 10px;
+    border-bottom: 1px solid yellow;
+    cursor: pointer;
+}
+
+.forum-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Selected Forum */
+.selected {
+    background-color: rgba(255, 255, 0, 0.3);
+}

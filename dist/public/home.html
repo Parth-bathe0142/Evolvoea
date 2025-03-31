@@ -44,6 +44,7 @@
                     function isLoggedIn() {
                         return sessionStorage.getItem("username") !== null;
                     }
+<<<<<<< HEAD
 
                     // Update button visibility
                     function updateButtonVisibility() {
@@ -68,6 +69,18 @@
                         alert("You have been logged out.");
                     });
                 });
+=======
+                }
+                const main = async () => {
+                    const response = await fetch("/pageload");
+                    const json = await response.json()
+                    if(json.result == "success") {
+                        isLoggedIn = true;
+                        updateButtonVisibility()
+                    }
+                }
+                main()
+>>>>>>> 15a952c59dcfdcb668a37e156ed1fab3229d91c6
             </script>
 
         </div>
