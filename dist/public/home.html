@@ -41,14 +41,11 @@
                     const logoutButton = document.getElementById('logout-btn');
 
                     // Check if user is logged in (using sessionStorage)
-                    function isLoggedIn() {
-                        return sessionStorage.getItem("username") !== null;
-                    }
-<<<<<<< HEAD
-
+                    let isLoggedIn = false
+                        
                     // Update button visibility
                     function updateButtonVisibility() {
-                        if (isLoggedIn()) {
+                        if (isLoggedIn) {
                             loginButton.style.display = 'none';
                             signupButton.style.display = 'none';
                             logoutButton.style.display = 'inline-block';
@@ -64,23 +61,21 @@
 
                     // Logout function
                     logoutButton.addEventListener("click", function () {
-                        sessionStorage.removeItem("username"); // Remove user session
+                        isLoggedIn = false
                         updateButtonVisibility(); // Update UI
                         alert("You have been logged out.");
                     });
-                });
-=======
-                }
-                const main = async () => {
-                    const response = await fetch("/pageload");
-                    const json = await response.json()
-                    if(json.result == "success") {
-                        isLoggedIn = true;
-                        updateButtonVisibility()
+                    const main = async () => {
+                        const response = await fetch("/pageload");
+                        const json = await response.json()
+                        if(json.result == "success") {
+                            isLoggedIn = true;
+                            updateButtonVisibility()
+                        }
                     }
-                }
-                main()
->>>>>>> 15a952c59dcfdcb668a37e156ed1fab3229d91c6
+                    main()
+                });
+                
             </script>
 
         </div>

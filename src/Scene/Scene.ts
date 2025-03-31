@@ -77,7 +77,7 @@ export class Scene {
         this.camera = new Camera({
             object: this.player
         })
-        this.keyInput = new KeyInput({ puppet: this.player })
+        this.keyInput = new KeyInput({ puppet: this.player, scene: this })
         this.pathFinder = new PathFinder()
 
         this.isPaused = false
@@ -257,6 +257,7 @@ export class Scene {
               })
         } else {
             ui.gameOver()
+            ui.displayScore(0)
         }
     }
 

@@ -57,19 +57,17 @@ app.post("/signup_request", async (req, res) => {
     client = await connectDB()
     const { username, password, email } = req.body
     const accounts = client.db('game').collection('user_accounts')
-    let randomnumber = Math.floor(Math.random() * (9000 + 1) + 1000)
-
-
+    
     try {
         const match = await accounts.findOne({ username })
         if (match) {
             res.json({ result: "Failure", reason: "User already exist" })
         }
         else {
-            // const saltRound = 10 //Higher number = More secure
-            // const hashedPassword = await bcrypt.hash(password, saltRound) //Creates the hash of password 
+            let saltRound = 10 //Higher number = More secure
+            let hashedPassword = await bcrypt.hash(password, saltRound) //Creates the hash of password 
 
-            await accounts.insertOne({ username, password, email, randomnumber })
+            await accounts.insertOne({ username, password: hashedPassword, email, score: 0 })
 
             req.session.username = username;
             //res.json({ result: "Success" })
@@ -93,7 +91,10 @@ app.post("/login_request", async (req, res) => {
             return res.redirect("../public/login.html?error=User not found");
         }
 
-        const isMatch = (password === user.password);
+        let saltRound = 10 //Higher number = More secure
+        let hashedPassword = await bcrypt.hash(password, saltRound) //Creates the hash of password
+
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.redirect("/public/login.html?error=Incorrect username or password");
         }
@@ -129,7 +130,7 @@ app.get("/leaderboard", async (req, res) => {
 
 app.post("/add-score", async (req, res) => {
     if (!req.session.username) {
-        return res.status(403).json({ result: "failure", reason: "Not logged in" })
+        return res.status(404).json({ result: "failure", reason: "Not logged in" })
     }
 
     const score = req.body.score
@@ -144,12 +145,8 @@ app.post("/add-score", async (req, res) => {
             { returnDocument: "after" }
         );
 
-        if (!user.value) {
-            return res.json({ result: "failure", reason: "user not found" })
-        }
-        res.json({ result: "success", newscore: user.value.score });
+        res.json({ result: "success", newscore: score });
     } catch (error) {
-        console.error("Leaderboard fetch error:", error);
         res.status(500).json({ result: "Failure", reason: "Internal server error" });
     }
 
