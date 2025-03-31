@@ -22,6 +22,7 @@
     <nav class="navbar">
         <div class="logo">EVOLVOEA</div>
         <ul class="nav-links">
+            <!-- <li><a href="home.html">Home</a></li> -->
             <li><a href="index.html">Game</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="leaderboard.html">LeaderBoard</a></li>
@@ -34,6 +35,9 @@
             <p></p>
             <p></p>
             <button id="logout-btn">Logout</button>
+            <p></p>
+            <p></p>
+            <p></p>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
                     const loginButton = document.getElementById('login-btn');
@@ -42,9 +46,13 @@
 
                     // Check if user is logged in (using sessionStorage)
                     let isLoggedIn = false
+
+
+                    let isLoggedIn = false
                         
                     // Update button visibility
                     function updateButtonVisibility() {
+                        if (isLoggedIn) {
                         if (isLoggedIn) {
                             loginButton.style.display = 'none';
                             signupButton.style.display = 'none';
@@ -59,11 +67,30 @@
                     // Call function on page load
                     updateButtonVisibility();
 
+                    function logout() {
+                        fetch("/logout")
+                        isLoggedIn = false
                     // Logout function
                     logoutButton.addEventListener("click", function () {
                         isLoggedIn = false
                         updateButtonVisibility(); // Update UI
                         alert("You have been logged out.");
+                    }
+                    // Logout function
+                    logoutButton.addEventListener("click", logout);
+
+                    const main = async () => {
+                        const response = await fetch("/pageload");
+                        const json = await response.json()
+                        if (json.result == "success") {
+                            isLoggedIn = true;
+                            updateButtonVisibility()
+                        }
+                    }
+
+                    main()
+                });
+
                     });
                     const main = async () => {
                         const response = await fetch("/pageload");
