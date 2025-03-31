@@ -1,0 +1,125 @@
+/* Importing a cool pixelated font */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Global Styles */
+body {
+    font-family: 'Press Start 2P', cursive;
+    margin: 0;
+    padding: 0;
+    background: #2c2c2c;
+    color: #fff;
+    text-align: center;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+/* Logo */
+.logo {
+    font-size: 26px;
+    font-weight: bold;
+    color: #ffcc00;
+    text-shadow: 2px 2px 10px #ffcc00;
+}
+
+/* Navigation Links */
+.nav-links {
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-links li {
+    margin: 0 15px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #ffcc00;
+    font-size: 14px;
+    transition: 0.3s ease;
+    text-shadow: 2px 2px 10px #ffcc00;
+}
+
+.nav-links a:hover {
+    color: #ff4500;
+    text-shadow: 0px 0px 10px #ff4500;
+}
+
+/* Hero Section */
+.hero {
+    margin-top: 120px;
+    padding: 100px 20px;
+    color: white;
+    text-align: center;
+    text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.8);
+}
+
+/* Hero Title */
+.hero h1 {
+    font-size: 42px;
+    color: #ffcc00;
+    text-shadow: 3px 3px 10px rgba(255, 255, 0, 1);
+}
+
+/* About Section */
+.about-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 40px 20px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+.about-content h2 {
+    font-size: 24px;
+    color: #ffcc00;
+    margin-bottom: 10px;
+}
+
+.about-content p {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.about-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.about-content ul li {
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Call-to-Action Button */
+.cta-button {
+    padding: 15px 30px;
+    background: #ff4500;
+    color: white;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 2px solid #ffcc00;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.cta-button:hover {
+    background: #ffcc00;
+    color: #000;
+}
