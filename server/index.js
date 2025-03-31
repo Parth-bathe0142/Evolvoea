@@ -1,4 +1,5 @@
 const express = require("express")
+const session = require('express-session')
 const path = require("path")
 const bcrypt = require('bcrypt')
 const bodyParser = require('body-parser')
@@ -9,6 +10,13 @@ const port = process.env.PORT
 const CONNECTION_STRING = process.env.CONNECTION_STRING
 const app = express()
 let client;
+
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false }
+}));
 
 app.use('/', express.static(path.join(__dirname, '../dist')))
 
@@ -62,7 +70,7 @@ app.post("/signup_request", async (req, res) => {
 
             await accounts.insertOne({ username, password, email, randomnumber })
 
-            res.cookie("username", username, { maxAge: 20 * 1000 })
+            req.session.username = username;
             //res.json({ result: "Success" })
             res.redirect("/public/home.html")
         }
@@ -87,7 +95,7 @@ app.post("/login_request", async (req, res) => {
             return res.json({ result: "faliure", reason: "Incorrect username/password" })
         }
 
-        res.cookie("username", username, { maxAge: 20 * 1000 })
+        req.session.username = username;
         //res.json({ result: "Success" })
         res.redirect("/public/home.html")
     } catch (error) {
@@ -217,7 +225,7 @@ app.get("/forum/:id", async (req, res) => {
         res.json({ result: "failure", reason: error })
     }
 
-})
+}) 
 
 
 
