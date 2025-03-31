@@ -46,8 +46,7 @@
 
                     // Check if user is logged in (using sessionStorage)
                     let isLoggedIn = false
-
-
+                        
                     // Update button visibility
                     function updateButtonVisibility() {
                         if (isLoggedIn) {
@@ -67,10 +66,9 @@
                     function logout() {
                         fetch("/logout")
                         isLoggedIn = false
-                        updateButtonVisibility(); // Update UI
-                        alert("You have been logged out.");
+                        updateButtonVisibility()
                     }
-                    // Logout function
+                    
                     logoutButton.addEventListener("click", logout);
 
                     const main = async () => {
@@ -81,10 +79,11 @@
                             updateButtonVisibility()
                         }
                     }
-
                     main()
                 });
 
+            
+                
             </script>
 
         </div>
