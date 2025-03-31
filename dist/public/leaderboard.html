@@ -5,29 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaderboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            padding: 0;
+            background: #2c2c2c;
+            color: #fff;
             text-align: center;
-            background-color: #f4f4f4;
+        }
+
+        h2 {
+            color: #ffcc00;
+            text-shadow: 3px 3px 10px rgba(255, 255, 0, 1);
         }
 
         table {
             width: 60%;
             margin: 20px auto;
             border-collapse: collapse;
-            background: white;
+            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+            color: white;
         }
 
-        th,
-        td {
-            padding: 10px;
-            border: 1px solid black;
+        th, td {
+            padding: 15px;
+            border: 2px solid #ffcc00;
+            text-align: center;
         }
 
         th {
-            background: #007bff;
+            background: #ff4500;
             color: white;
+            text-shadow: 0px 0px 10px #ff4500;
+        }
+
+        tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
@@ -40,7 +56,6 @@
             <tr>
                 <th>Rank</th>
                 <th>Username</th>
-                <th>Email</th>
                 <th>Score</th>
             </tr>
         </thead>
@@ -53,15 +68,12 @@
                 const response = await fetch("/leaderboard");
                 const users = await response.json();
                 const tableBody = document.querySelector("#leaderboard tbody");
-
                 tableBody.innerHTML = "";
-
                 users.forEach((user, index) => {
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${index + 1}</td>
                         <td>${user.username}</td>
-                        <td>${user.email}</td>
                         <td>${user.score}</td>
                     `;
                     tableBody.appendChild(row);
