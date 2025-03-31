@@ -9,6 +9,17 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
 </head>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorMessage = urlParams.get("error");
+
+        if (errorMessage) {
+            alert(errorMessage);  // Show error in a popup
+        }
+    });
+</script>
+
 <body>
     <div class="login-container">
         <h2>Login to Evolvoea World</h2><br>
@@ -18,7 +29,7 @@
 
             <label for="name">Password</label>
             <input type="password" name="password" placeholder="Enter Password" required>
-            
+
             <input type="submit" value="Start Adventure!">
         </form>
     </div>
