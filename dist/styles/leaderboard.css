@@ -4,8 +4,10 @@
 /* Global Styles */
 body {
     font-family: 'Press Start 2P', cursive;
-    background-color: #1a1a1a; /* Very dark background */
-    color: #ffcc00; /* Orange-yellow text */
+    background-color: #1a1a1a;
+    /* Very dark background */
+    color: #ffcc00;
+    /* Orange-yellow text */
     text-align: center;
     margin: 0;
     padding: 0;
@@ -13,7 +15,8 @@ body {
 
 /* Navigation Bar */
 .navbar {
-    background-color: #222; /* Darker background for navbar */
+    background-color: #222;
+    /* Darker background for navbar */
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -21,21 +24,28 @@ body {
 }
 
 .navbar a {
-    color: #ffcc00; /* Orange-yellow text for links */
+    color: #ffcc00;
+    /* Orange-yellow text for links */
     text-decoration: none;
     padding: 10px 15px;
     transition: color 0.3s ease;
 }
 
 .navbar a:hover {
-    color: #ff9900; /* Slightly different orange on hover */
+    color: #ff9900;
+    /* Slightly different orange on hover */
 }
 
 /* Button Styles */
-#login-btn, #signup-btn, #logout-btn {
-    background: linear-gradient(to bottom, #ff9900, #ff6600); /* Gradient orange */
-    color: #000; /* Black text */
-    border: 2px solid #333; /* Dark border */
+#login-btn,
+#signup-btn,
+#logout-btn {
+    background: linear-gradient(to bottom, #ff9900, #ff6600);
+    /* Gradient orange */
+    color: #000;
+    /* Black text */
+    border: 2px solid #333;
+    /* Dark border */
     padding: 10px 15px;
     border-radius: 5px;
     font-weight: bold;
@@ -43,44 +53,58 @@ body {
     transition: background 0.3s ease;
 }
 
-#login-btn:hover, #signup-btn:hover, #logout-btn:hover {
-    background: linear-gradient(to bottom, #ff6600, #ff3300); /* Darker gradient on hover */
+#login-btn:hover,
+#signup-btn:hover,
+#logout-btn:hover {
+    background: linear-gradient(to bottom, #ff6600, #ff3300);
+    /* Darker gradient on hover */
 }
 
 /* Leaderboard Container */
 .leaderboard-container {
-    margin-top: 50px; /* Adjust as needed */
+    margin-top: 50px;
+    /* Adjust as needed */
     padding: 20px;
     text-align: center;
 }
 
 /* Leaderboard Title */
 .leaderboard-title {
-    font-size: 2em; /* Adjust size as needed */
-    text-shadow: 2px 2px 5px rgba(255, 204, 0, 0.5); /* Subtle glow */
+    font-size: 2em;
+    /* Adjust size as needed */
+    text-shadow: 2px 2px 5px rgba(255, 204, 0, 0.5);
+    /* Subtle glow */
     margin-bottom: 20px;
 }
 
 /* Leaderboard Table */
 .leaderboard-table {
-    width: 80%; /* Adjust as needed */
+    width: 80%;
+    /* Adjust as needed */
     margin: 20px auto;
     border-collapse: collapse;
-    background-color: #222; /* Dark table background */
-    color: #ffcc00; /* Orange-yellow text */
-    border: 2px solid #333; /* Dark border */
+    background-color: #222;
+    /* Dark table background */
+    color: #ffcc00;
+    /* Orange-yellow text */
+    border: 2px solid #333;
+    /* Dark border */
 }
 
-.leaderboard-table th, .leaderboard-table td {
+.leaderboard-table th,
+.leaderboard-table td {
     padding: 10px;
-    border: 1px solid #333; /* Dark cell border */
+    border: 1px solid #333;
+    /* Dark cell border */
 }
 
 .leaderboard-table th {
-    background-color: #333; /* Slightly lighter header */
+    background-color: #333;
+    /* Slightly lighter header */
 }
 
 /* Hover Effect on Table Rows */
 .leaderboard-table tbody tr:hover {
-    background-color: #3a3a3a; /* Slightly lighter on hover */
+    background-color: #3a3a3a;
+    /* Slightly lighter on hover */
 }
