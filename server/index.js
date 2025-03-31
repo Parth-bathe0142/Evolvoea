@@ -37,6 +37,13 @@ app.get("/game", (_, res) => {
     })
 })
 
+
+
+
+
+
+
+
 app.post("/signup_request", async (req, res) => {
     client = await connectDB()
     const { username, password, email } = req.body
@@ -89,18 +96,58 @@ app.post("/login_request", async (req, res) => {
     }
 })
 
+
+
+
+
+
+
+
 app.get("/leaderboard", async (req, res) => {
     client = await connectDB();
     const accounts = client.db('game').collection('user_accounts');
 
     try {
-        const users = await accounts.find().sort({ randomnumber: -1 }).toArray();
+        const users = await accounts.find().sort({ score: -1 }).toArray();
         res.json(users);
     } catch (error) {
         console.error("Leaderboard fetch error:", error);
         res.status(500).json({ result: "Failure", reason: "Internal server error" });
     }
 });
+
+app.post("/add-score", async (req, res) => {
+    if(!req.session.username) {
+        return res.status(403).json({ result: "failure", reason: "Not logged in" })
+    }
+    
+    const score = req.body.score
+    const username = req.session.username
+    client = await connectDB();
+    const accounts = client.db('game').collection('user_accounts');
+    
+    try {
+        const user = await accounts.findOneAndUpdate(
+            { username },
+            { $inc: { score } },
+            { returnDocument: "after" }
+        );
+
+        if(!user.value) {
+            return res.json({ result: "failure", reason: "user not found"})
+        }
+        res.json({ result: "success", newscore: user.value.score });
+    } catch (error) {
+        console.error("Leaderboard fetch error:", error);
+        res.status(500).json({ result: "Failure", reason: "Internal server error" });
+    }
+
+})
+
+
+
+
+
 
 
 
@@ -174,8 +221,6 @@ app.get("/forum/:id", async (req, res) => {
 
 
 
-
-
 app.post("/new-forum", async (req, res) => {
     client = await connectDB()
 
@@ -217,6 +262,16 @@ app.post("/new-post", async (req, res) => {
 
     return res.json({ result: "success" });
 });
+
+
+
+
+
+
+
+
+
+
 
 app.listen(port, async () => {
     console.log(`Listening at http://localhost:${port}/public/home.html`)

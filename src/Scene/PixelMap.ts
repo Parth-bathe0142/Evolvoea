@@ -40,18 +40,14 @@ export class PixelMap {
     // of format layername: layerobject
     layers: { [key: string]: Layer } = {}
 
-    // Images constructed from each layer stored as ImageData
-    // to draw to the canvas in bulk
-    layerImageData: { [key: string]: ImageData } | null = {}
-
-
     /**
      * Displays error when map is not found
      * @param name The folder name in which the spritesheet and map.json is present
      * @param spriteRows number of rows in spritesheet.png (rows -> up/down)
      * @param spriteCols number of cols in spritesheet.png (cols -> right/left)
      */
-    constructor(name: string, spriteRows: number, spriteCols: number) {
+    constructor(name: string, spriteRows: number, spriteCols: number, goal: Coord) {
+        this.goal = goal
         this.spritesheetCols = spriteCols
         this.spritesheetRows = spriteRows
         this.name = name
@@ -67,6 +63,8 @@ export class PixelMap {
             try {
                 const response = await fetch(`../assets/maps/${this.name}/map.json`)
                 json = await response.json() as JSONInput
+                console.log(json);
+                
             } catch (error) {
                 console.error("map not found")
                 rej()
@@ -74,7 +72,7 @@ export class PixelMap {
             this.initLayer(json!)
             this.spriteSheet.src = `../assets/maps/${this.name}/spritesheet.png`
             this.isLoaded = true
-            this.goal = json!.goal
+            
             res()
         })
     }
@@ -104,10 +102,6 @@ export class PixelMap {
                 )
             }
         }
-    }
-
-    drawLayerData(ctx: CanvasRenderingContext2D, state: GameState, layer: string) {
-
     }
 
     /**
@@ -145,5 +139,10 @@ export class PixelMap {
             x: (nid % this.spritesheetCols) * 16,
             y: Math.floor(nid / this.spritesheetCols) * 16
         }
+    }
+
+    destroy() {
+        this.spriteSheet.src = ""
+        this.layers = {}
     }
 }

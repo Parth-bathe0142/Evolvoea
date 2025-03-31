@@ -1,5 +1,4 @@
 dist/script/
-dist/wasm/
 node_modules
 package-lock.json
 dist.zip

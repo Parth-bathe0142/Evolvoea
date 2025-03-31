@@ -8,6 +8,7 @@ export interface PlayerConfig extends GridCharacterConfig {
 export class Player extends GridCharacter {
     facing: GridDirs = 'down'
     beingControlled: boolean = false
+    health: number = 5
 
     constructor(config: PlayerConfig) {
         config.spriteConfig.animations = {

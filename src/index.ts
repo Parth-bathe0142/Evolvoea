@@ -8,14 +8,15 @@ ui.goToScreen("title-screen")
 
 document.querySelector("#title-screen_button")?.addEventListener("click", async e => {
     runGame()
-    ui.goToScreen("")
+    ui.goToGame()
 })
 
-document.querySelector("#replay-screen_button_return")?.addEventListener("click", async e => {
+document.querySelector("#replay-screen_button_back")?.addEventListener("click", async e => {
     ui.goToScreen("title-screen")
 })
 document.querySelector("#replay-screen_button_replay")?.addEventListener("click", async e => {
-    ui.goToScreen("")
+   runGame()
+   ui.goToGame()
 })
 
 async function runGame() {

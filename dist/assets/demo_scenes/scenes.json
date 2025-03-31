@@ -1,24 +1,20 @@
 {
-    "exampleScene": {
-        "playerPos": { "x": 4, "y": 8 },
-        "randomSpawns": 3
-    },
     "evolvoea": {
-        "playerPos": { "x": 20, "y": 20 },
-        "randomSpawns": 5,
+        "playerPos": { "x": 20, "y": 18 },
+        "randomSpawns": 7,
         "mapConfig": {
             "name": "evolvoea",
             "spritesheetSize": [7, 8],
-            "goal": { "x": 30, "y": 30}
+            "goal": { "x": 47, "y": 31}
         }
     },
     "tutorial_project": {
         "playerPos": { "x": 20, "y": 20 },
-        "randomSpawns": 5,
+        "randomSpawns": 8,
         "mapConfig": {
             "name": "tutorial_project",
             "spritesheetSize": [7, 8],
-            "goal": { "x": 30, "y": 30}
+            "goal": { "x": 20, "y": 17}
         }
     }
 }

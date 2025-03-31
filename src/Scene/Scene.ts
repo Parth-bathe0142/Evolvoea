@@ -8,7 +8,9 @@ import { Coord } from "../models/core/misc.js"
 import { PathFinder } from "../models/core/PathFinder.js"
 import { Time } from "../models/core/Time.js"
 import { utils } from "../models/core/utils.js"
+import { ui } from "../ui.js"
 import { PixelMap } from "./PixelMap.js"
+import { TileMarker } from "./Tile.js"
 
 export interface SceneConfig {
     mapConfig?: {
@@ -27,6 +29,7 @@ export class Scene {
     canvas: HTMLCanvasElement
 
     characters: GameObject[] = []
+    randomeSpawns = 0
     interactables: Map<Coord, GameObject>
     player: Player
     map: PixelMap
@@ -41,7 +44,8 @@ export class Scene {
         this.canvas = document.getElementById("game-canvas")! as HTMLCanvasElement
         this.ctx = this.canvas.getContext("2d")!
         this.characters = []
-        this.interactables = new Map<Coord, GameObject>
+        this.randomeSpawns = config.randomSpawns ?? 0
+
         this.player = new Player({
             gridPos: config.playerPos ?? { x: 5, y: 7 },
             name: "player",
@@ -52,13 +56,22 @@ export class Scene {
             }
         })
 
+        this.interactables = new Map<Coord, GameObject>
+        const goal = config.mapConfig?.goal
+        if(goal) {
+            const marker = new TileMarker(goal)
+            this.interactables.set(goal, marker)
+
+        }
+
         if(config.mapConfig) {
             this.map = new PixelMap(
                 config.mapConfig.name,
-                ...config.mapConfig.spritesheetSize
+                ...config.mapConfig.spritesheetSize,
+                config.mapConfig.goal
             )
         } else {
-            this.map = new PixelMap("example_map", 6, 8)
+            this.map = new PixelMap("example_map", 6, 8, { x: 0, y: 0 })
         }
         this.time = new Time(48)
         this.camera = new Camera({
@@ -97,21 +110,29 @@ export class Scene {
 
     update = () => {
         this.player.update()
-        let newSpawns = 0;
         this.characters.forEach(object => {
             object.update()
 
             if(object instanceof GridSlime) {
                 if(utils.getDistance(object.gridPos, this.player.gridPos) < 1.5) {
                     object.die()
-                    newSpawns++
+
+                    this.player.health --
+                    ui.removeHealth()
+                    if(this.player.health <= 0) {
+                        this.endGame("lose")
+                    }
                 }
             }
         })
-        for(let i = 0; i < newSpawns; i++) this.spawnRandomSlime()
+        for(let i = 0; i < this.randomeSpawns - this.characters.length; i++) {
+            this.spawnRandomSlime()
+        }
 
-        if(utils.getDistance(this.player.gridPos, this.map.goal) < 1) {
+        this.interactables.forEach(object => object.update())
 
+        if(utils.getDistance(this.player.gridPos, this.map.goal) < 1.5) {
+            this.endGame("win", this.player.health)
         }
     }
 
@@ -126,6 +147,9 @@ export class Scene {
         this.map.drawLayer(this.ctx, gameState, "Water");
         this.map.drawLayer(this.ctx, gameState, "Ground");
         this.map.drawLayer(this.ctx, gameState, "main");
+        this.interactables.forEach(object => {
+            object.sprite.draw(this.ctx, gameState)
+        })
         for (const object of this.characters) {
             object.sprite.draw(this.ctx, gameState)
         }
@@ -134,9 +158,11 @@ export class Scene {
     }
 
     private init() {
-        const { pause, play } = this.time.runLoop(this.update, this.render)!
-        this.pause = pause
-        this.play = play
+        setTimeout(() => {
+            const { pause, play } = this.time.runLoop(this.update, this.render)!
+            this.pause = pause
+            this.play = play
+        }, 500)
     }
 
     pause?: () => void
@@ -180,7 +206,7 @@ export class Scene {
             x: Math.floor(Math.random() * this.map.width),
             y: Math.floor(Math.random() * this.map.width)
         }
-        for(let trial = 0; trial < 500; trial++) {
+        for(let trial = 0; trial < 5000; trial++) {
             if(utils.getDistance(playerPos, randomPos) > 5) {
                 if(this.isSpaceValid(randomPos)) {
                     this.characters.push(new GridSlime({
@@ -194,6 +220,60 @@ export class Scene {
             }
         }
     }
+
+    endGame(status: "lose"): void;
+    endGame(status: "win", health: number): void;
+
+    endGame(status: "win" | "lose", health?: number) {
+        this.destroy()
+
+        if(status == "win") {
+            health = health!
+
+            ui.gameWon()
+            fetch("/add-score", {
+                headers: {
+                    'content-type': "application/json"
+                },
+                method: 'post',
+                body: JSON.stringify({
+                    score: health * 10 * (health / 5)
+                })
+            })
+              .then(res => {
+                if(res.ok) {
+                    return res.json()
+                }
+              })
+              .then(json => {
+                if(json.result == "success") {
+                    ui.displayScore(json.newscore)
+                } else {
+                    ui.displayScore("error: " + json.reason)
+                }
+              })
+              .catch(err => {
+                ui.displayScore("error: " + err)
+              })
+        } else {
+            ui.gameOver()
+        }
+    }
+
+    destroy() {
+        this.pause?.()
+        setTimeout(() => {
+            this.characters.forEach(char => {
+                char.destroy()
+            })
+            this.characters = []
+            this.player.destroy()
+            this.map.destroy()
+            this.ctx.clearRect(0,0, this.canvas.width, this.canvas.height)
+            
+            ui.emptyHealth()
+        }, 20)
+      }
 }
 
 

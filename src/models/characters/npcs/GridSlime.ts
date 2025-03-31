@@ -74,6 +74,7 @@ export class GridSlime extends GridCharacter {
     isAlive = true
     // deadUpdates = 13 * DEFAULT_ANIM_DURATION
     maxSteps = 24
+    failure = 0
     
     constructor(config: GridSlimeConfig) {
         config.spriteConfig = {
@@ -118,9 +119,15 @@ export class GridSlime extends GridCharacter {
     followPlayer() {
         const playerPos = this.scene.player.gridPos
         if(!this.movingTo) {
-            this.startWalkTo(playerPos)
-        }
             
+            this.startWalkTo(playerPos).catch(err => {
+                this.failure++
+
+                if(this.failure > 50) {
+                    this.die()
+                }
+            })
+        }      
     }
 
     makeMove(to: GridDirs, resolve?: () => void): void {
