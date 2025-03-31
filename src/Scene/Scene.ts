@@ -237,7 +237,7 @@ export class Scene {
                 },
                 method: 'post',
                 body: JSON.stringify({
-                    score: health * 10 * (health / 5)
+                    score: health * 10
                 })
             })
               .then(res => {
