@@ -1,7 +1,7 @@
 dist/script/
 node_modules
 package-lock.json
-dist.zip
+src.zip
 .env
 
 rust/target
