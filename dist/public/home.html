@@ -34,6 +34,9 @@
             <p></p>
             <p></p>
             <button id="logout-btn">Logout</button>
+            <p></p>
+            <p></p>
+            <p></p>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
                     const loginButton = document.getElementById('login-btn');
@@ -41,14 +44,12 @@
                     const logoutButton = document.getElementById('logout-btn');
 
                     // Check if user is logged in (using sessionStorage)
-                    function isLoggedIn() {
-                        return sessionStorage.getItem("username") !== null;
-                    }
-<<<<<<< HEAD
+                    let isLoggedIn = false
+                        
 
                     // Update button visibility
                     function updateButtonVisibility() {
-                        if (isLoggedIn()) {
+                        if (isLoggedIn) {
                             loginButton.style.display = 'none';
                             signupButton.style.display = 'none';
                             logoutButton.style.display = 'inline-block';
@@ -62,25 +63,27 @@
                     // Call function on page load
                     updateButtonVisibility();
 
-                    // Logout function
-                    logoutButton.addEventListener("click", function () {
-                        sessionStorage.removeItem("username"); // Remove user session
+                    function logout() {
+                        fetch("/logout")
+                        isLoggedIn = false
                         updateButtonVisibility(); // Update UI
                         alert("You have been logged out.");
-                    });
-                });
-=======
-                }
-                const main = async () => {
-                    const response = await fetch("/pageload");
-                    const json = await response.json()
-                    if(json.result == "success") {
-                        isLoggedIn = true;
-                        updateButtonVisibility()
                     }
-                }
-                main()
->>>>>>> 15a952c59dcfdcb668a37e156ed1fab3229d91c6
+                    // Logout function
+                    logoutButton.addEventListener("click", logout);
+
+                    const main = async () => {
+                        const response = await fetch("/pageload");
+                        const json = await response.json()
+                        if (json.result == "success") {
+                            isLoggedIn = true;
+                            updateButtonVisibility()
+                        }
+                    }
+                    
+                    main()
+                });
+
             </script>
 
         </div>

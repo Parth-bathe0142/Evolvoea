@@ -106,7 +106,13 @@ app.post("/login_request", async (req, res) => {
     }
 });
 
-
+app.post("/logout", (req, res) => {
+    req.session.destroy(() => {
+        console.log("logged out");
+        
+        res.json({ result: "success" })
+    })
+})
 
 
 

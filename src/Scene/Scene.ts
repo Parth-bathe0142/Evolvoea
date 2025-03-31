@@ -257,6 +257,7 @@ export class Scene {
               })
         } else {
             ui.gameOver()
+            ui.displayScore("0")
         }
     }
 
