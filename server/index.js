@@ -67,9 +67,10 @@ app.post("/signup_request", async (req, res) => {
             let saltRound = 10 //Higher number = More secure
             let hashedPassword = await bcrypt.hash(password, saltRound) //Creates the hash of password 
 
-            await accounts.insertOne({ username, password: hashedPassword, email, score: 0 })
+            const doc = await accounts.insertOne({ username, password: hashedPassword, email, score: 0 })
 
             req.session.username = username;
+            req.session.userId = doc.insertedId
             //res.json({ result: "Success" })
             res.redirect("/public/home.html")
         }
@@ -100,6 +101,7 @@ app.post("/login_request", async (req, res) => {
         }
 
         req.session.username = username;
+        req.session.userId = user._id;
         res.redirect("/public/home.html"); // Redirect to home if login is successful
     } catch (error) {
         console.log("Login error:", error);
@@ -212,7 +214,6 @@ app.get("/forum/:id", async (req, res) => {
         let str = ""
         let count = 0;
         for await (const doc of documents) {
-            console.log(doc);
 
             str += `<div id="${doc.forumId}" class="post-item">
             <h3 class="post-poster">${doc.poster}</h3>

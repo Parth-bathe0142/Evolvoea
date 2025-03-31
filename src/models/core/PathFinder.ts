@@ -33,14 +33,16 @@ export class PathFinder {
     }
     
     wasm?: InitOutput
-
+    ready = false
     constructor() {
         initWASM("../../wasm/wasm_bg.wasm")
           .then((wasm: InitOutput) => this.wasm = wasm)
+          .then(() => this.ready = true)
           .catch(console.error)
     }
 
     findPath(startx: number, starty: number, endx: number, endy: number, mode: number): string[] {
+        if(!this.ready) return []
         if(this.wasm) {
             return find_path(startx, starty, endx, endy, mode)
         } else {

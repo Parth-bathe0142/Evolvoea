@@ -41,6 +41,8 @@ export class Scene {
     isPaused: boolean
 
     constructor(config: SceneConfig) {
+        this.pathFinder = new PathFinder()
+
         this.canvas = document.getElementById("game-canvas")! as HTMLCanvasElement
         this.ctx = this.canvas.getContext("2d")!
         this.characters = []
@@ -78,7 +80,6 @@ export class Scene {
             object: this.player
         })
         this.keyInput = new KeyInput({ puppet: this.player, scene: this })
-        this.pathFinder = new PathFinder()
 
         this.isPaused = false
 
@@ -96,8 +97,6 @@ export class Scene {
                 }
         })
         await this.map.load()
-        const bmap = PathFinder.mapFromPixelMap(this.map)
-        this.pathFinder.setMap(bmap, this.map.height, this.map.width)
         
         if(config.randomSpawns) {
             for(let i = 1; i <= config.randomSpawns; i++) {
@@ -107,16 +106,16 @@ export class Scene {
         }
         this.init()
     }
-
+    
     update = () => {
         this.player.update()
         this.characters.forEach(object => {
             object.update()
-
+            
             if(object instanceof GridSlime) {
                 if(utils.getDistance(object.gridPos, this.player.gridPos) < 1.5) {
                     object.die()
-
+                    
                     this.player.health --
                     ui.removeHealth()
                     if(this.player.health <= 0) {
@@ -128,22 +127,22 @@ export class Scene {
         for(let i = 0; i < this.randomeSpawns - this.characters.length; i++) {
             this.spawnRandomSlime()
         }
-
+        
         this.interactables.forEach(object => object.update())
-
+        
         if(utils.getDistance(this.player.gridPos, this.map.goal) < 1.5) {
             this.endGame("win", this.player.health)
         }
     }
-
+    
     render = () => {
         const gameState = {
             camera: this.camera,
             time: this.time
         }
-
+        
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height)
-
+        
         this.map.drawLayer(this.ctx, gameState, "Water");
         this.map.drawLayer(this.ctx, gameState, "Ground");
         this.map.drawLayer(this.ctx, gameState, "main");
@@ -156,9 +155,11 @@ export class Scene {
         this.player.sprite.draw(this.ctx, gameState)
         this.map.drawLayer(this.ctx, gameState, "Roof");
     }
-
+    
     private init() {
         setTimeout(() => {
+            const bmap = PathFinder.mapFromPixelMap(this.map)
+            this.pathFinder.setMap(bmap, this.map.height, this.map.width)
             const { pause, play } = this.time.runLoop(this.update, this.render)!
             this.pause = pause
             this.play = play
