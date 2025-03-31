@@ -77,7 +77,7 @@ export class Scene {
         this.camera = new Camera({
             object: this.player
         })
-        this.keyInput = new KeyInput({ puppet: this.player })
+        this.keyInput = new KeyInput({ puppet: this.player, scene: this })
         this.pathFinder = new PathFinder()
 
         this.isPaused = false
@@ -237,7 +237,7 @@ export class Scene {
                 },
                 method: 'post',
                 body: JSON.stringify({
-                    score: health * 10 * (health / 5)
+                    score: health * 10
                 })
             })
               .then(res => {
@@ -257,6 +257,7 @@ export class Scene {
               })
         } else {
             ui.gameOver()
+            ui.displayScore(0)
         }
     }
 

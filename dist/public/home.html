@@ -22,6 +22,7 @@
     <nav class="navbar">
         <div class="logo">EVOLVOEA</div>
         <ul class="nav-links">
+            <!-- <li><a href="home.html">Home</a></li> -->
             <li><a href="index.html">Game</a></li>
             <li><a href="about.html">About</a></li>
             <li><a href="leaderboard.html">LeaderBoard</a></li>
@@ -34,6 +35,9 @@
             <p></p>
             <p></p>
             <button id="logout-btn">Logout</button>
+            <p></p>
+            <p></p>
+            <p></p>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
                     const loginButton = document.getElementById('login-btn');
@@ -41,13 +45,11 @@
                     const logoutButton = document.getElementById('logout-btn');
 
                     // Check if user is logged in (using sessionStorage)
-                    function isLoggedIn() {
-                        return sessionStorage.getItem("username") !== null;
-                    }
-
+                    let isLoggedIn = false
+                        
                     // Update button visibility
                     function updateButtonVisibility() {
-                        if (isLoggedIn()) {
+                        if (isLoggedIn) {
                             loginButton.style.display = 'none';
                             signupButton.style.display = 'none';
                             logoutButton.style.display = 'inline-block';
@@ -61,23 +63,27 @@
                     // Call function on page load
                     updateButtonVisibility();
 
-                    // Logout function
-                    logoutButton.addEventListener("click", function () {
-                        sessionStorage.removeItem("username"); // Remove user session
-                        updateButtonVisibility(); // Update UI
-                        alert("You have been logged out.");
-                    });
-                });
-                                
-                const main = async () => {
-                    const response = await fetch("/pageload");
-                    const json = await response.json()
-                    if(json.result == "success") {
-                        isLoggedIn = true;
+                    function logout() {
+                        fetch("/logout")
+                        isLoggedIn = false
                         updateButtonVisibility()
                     }
-                }
-                main()
+                    
+                    logoutButton.addEventListener("click", logout);
+
+                    const main = async () => {
+                        const response = await fetch("/pageload");
+                        const json = await response.json()
+                        if (json.result == "success") {
+                            isLoggedIn = true;
+                            updateButtonVisibility()
+                        }
+                    }
+                    main()
+                });
+
+            
+                
             </script>
 
         </div>
@@ -85,7 +91,7 @@
 
     <section class="hero">
         <h1>Welcome to Evolvoea</h1><br>
-        <p>Your one-stop shop for amazing gaming experience</p><br><br>
+        <p>Your ultimate destination for an unbeatable gaming adventure!</p><br><br>
         <a href="index.html" class="cta-button">Explore</a>
     </section>
 
