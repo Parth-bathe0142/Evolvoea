@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="../styles/home_style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <script>
+    <!-- <script>
         function getCookie(name) {
             const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
             return match ? match[2] : null
         }
-    </script>
+    </script> -->
 
 </head>
 
@@ -35,33 +35,54 @@
             <p></p>
             <button id="logout-btn">Logout</button>
             <script>
-                let isLoggedIn = false;
-
-                // Function to update button visibility
-                function updateButtonVisibility() {
+                document.addEventListener("DOMContentLoaded", function () {
                     const loginButton = document.getElementById('login-btn');
                     const signupButton = document.getElementById('signup-btn');
                     const logoutButton = document.getElementById('logout-btn');
 
-                    if (isLoggedIn) {
-                        loginButton.style.display = 'none'; // Hide login button
-                        signupButton.style.display = 'none'; // Hide signup button
-                        logoutButton.style.display = 'inline-block'; // Show logout button
-                    } else {
-                        loginButton.style.display = 'inline-block'; // Show login button
-                        signupButton.style.display = 'inline-block'; // Show signup button
-                        logoutButton.style.display = 'none'; // Hide logout button
+                    // Check if user is logged in (using sessionStorage)
+                    function isLoggedIn() {
+                        return sessionStorage.getItem("username") !== null;
+                    }
+<<<<<<< HEAD
+
+                    // Update button visibility
+                    function updateButtonVisibility() {
+                        if (isLoggedIn()) {
+                            loginButton.style.display = 'none';
+                            signupButton.style.display = 'none';
+                            logoutButton.style.display = 'inline-block';
+                        } else {
+                            loginButton.style.display = 'inline-block';
+                            signupButton.style.display = 'inline-block';
+                            logoutButton.style.display = 'none';
+                        }
+                    }
+
+                    // Call function on page load
+                    updateButtonVisibility();
+
+                    // Logout function
+                    logoutButton.addEventListener("click", function () {
+                        sessionStorage.removeItem("username"); // Remove user session
+                        updateButtonVisibility(); // Update UI
+                        alert("You have been logged out.");
+                    });
+                });
+=======
+                }
+                const main = async () => {
+                    const response = await fetch("/pageload");
+                    const json = await response.json()
+                    if(json.result == "success") {
+                        isLoggedIn = true;
+                        updateButtonVisibility()
                     }
                 }
-                let username;
-                if (username = getCookie("username")) {
-                    isLoggedIn = true;
-                    updateButtonVisibility();
-                } else {
-                    isLoggedIn = false;
-                    updateButtonVisibility();
-                }
+                main()
+>>>>>>> 15a952c59dcfdcb668a37e156ed1fab3229d91c6
             </script>
+
         </div>
     </nav>
 

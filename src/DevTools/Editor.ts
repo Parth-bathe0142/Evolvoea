@@ -32,8 +32,8 @@ function uploadSprite() {
 // Select tile from the Tiles grid
 tilesetContainer.addEventListener("mousedown", (event: MouseEvent) => {
    selection = getCoords(event);
-   tilesetSelection.style.left = `${selection[0] * 32}px`;
-   tilesetSelection.style.top = `${selection[1] * 32}px`;
+   tilesetSelection.style.left = `${selection[0] * 16}px`;
+   tilesetSelection.style.top = `${selection[1] * 16}px`;
 });
 
 // Handler for placing new tiles on the map
@@ -71,7 +71,7 @@ function getCoords(e: MouseEvent): [number, number] {
     const rect = (e.target as HTMLElement).getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    return [Math.floor(mouseX / 32), Math.floor(mouseY / 32)];
+    return [Math.floor(mouseX / 16), Math.floor(mouseY / 16)];
 }
 
 
@@ -110,7 +110,7 @@ function draw(): void {
    const ctx = canvas.getContext("2d")!;
    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-   const size_of_crop = 32;
+   const size_of_crop = 16;
 
    layers.forEach((layer) => {
       Object.keys(layer).forEach((key) => {
@@ -120,12 +120,12 @@ function draw(): void {
 
          ctx.drawImage(
             tilesetImage,
-            tilesheetX * 32,
-            tilesheetY * 32,
+            tilesheetX * 16,
+            tilesheetY * 16,
             size_of_crop,
             size_of_crop,
-            positionX * 32,
-            positionY * 32,
+            positionX * 16,
+            positionY * 16,
             size_of_crop,
             size_of_crop
          );
@@ -133,4 +133,4 @@ function draw(): void {
    });
 }
 
-tilesetImage.src = "https://assets.codepen.io/21542/TileEditorSpritesheet.2x_2.png";
+tilesetImage.src = '/assets/tilesets/Grass.png';

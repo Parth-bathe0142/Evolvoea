@@ -82,28 +82,30 @@ app.post("/signup_request", async (req, res) => {
 })
 
 app.post("/login_request", async (req, res) => {
-    client = await connectDB()
-    const { username, password } = req.body
-    const accounts = client.db('game').collection('user_accounts')
+    client = await connectDB();
+    const { username, password } = req.body;
+    const accounts = client.db('game').collection('user_accounts');
 
     try {
-        const user = await accounts.findOne({ username })
+        const user = await accounts.findOne({ username });
+
         if (!user) {
-            return res.json({ result: "failure", reason: "User not found" })
+            return res.redirect("../public/login.html?error=User not found");
         }
-        const isMatch = (password == user.password)
+
+        const isMatch = (password === user.password);
         if (!isMatch) {
-            return res.json({ result: "faliure", reason: "Incorrect username/password" })
+            return res.redirect("/public/login.html?error=Incorrect username or password");
         }
 
         req.session.username = username;
-        //res.json({ result: "Success" })
-        res.redirect("/public/home.html")
+        res.redirect("/public/home.html"); // Redirect to home if login is successful
     } catch (error) {
-        console.log("Login error : ", error)
-        res.json({ result: "faliure", reason: "Internal server error" })
+        console.log("Login error:", error);
+        res.redirect("/public/login.html?error=Internal server error");
     }
-})
+});
+
 
 
 
@@ -126,15 +128,15 @@ app.get("/leaderboard", async (req, res) => {
 });
 
 app.post("/add-score", async (req, res) => {
-    if(!req.session.username) {
+    if (!req.session.username) {
         return res.status(403).json({ result: "failure", reason: "Not logged in" })
     }
-    
+
     const score = req.body.score
     const username = req.session.username
     client = await connectDB();
     const accounts = client.db('game').collection('user_accounts');
-    
+
     try {
         const user = await accounts.findOneAndUpdate(
             { username },
@@ -142,8 +144,8 @@ app.post("/add-score", async (req, res) => {
             { returnDocument: "after" }
         );
 
-        if(!user.value) {
-            return res.json({ result: "failure", reason: "user not found"})
+        if (!user.value) {
+            return res.json({ result: "failure", reason: "user not found" })
         }
         res.json({ result: "success", newscore: user.value.score });
     } catch (error) {
@@ -226,7 +228,7 @@ app.get("/forum/:id", async (req, res) => {
         res.json({ result: "failure", reason: error })
     }
 
-}) 
+})
 
 
 
