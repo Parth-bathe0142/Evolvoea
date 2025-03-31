@@ -100,6 +100,8 @@ app.post("/login_request", async (req, res) => {
 
         req.session.username = username;
         res.redirect("/public/home.html"); // Redirect to home if login is successful
+        console.log("Session Username:", req.session.username);
+
     } catch (error) {
         console.log("Login error:", error);
         res.redirect("/public/login.html?error=Internal server error");
@@ -109,7 +111,7 @@ app.post("/login_request", async (req, res) => {
 app.post("/logout", (req, res) => {
     req.session.destroy(() => {
         console.log("logged out");
-        
+
         res.json({ result: "success" })
     })
 })
