@@ -28,31 +28,48 @@
             <script>
                 let isLoggedIn = false;
 
-                // Function to update button visibility
-                function updateButtonVisibility() {
+                document.addEventListener("DOMContentLoaded", function () {
                     const loginButton = document.getElementById('login-btn');
                     const signupButton = document.getElementById('signup-btn');
                     const logoutButton = document.getElementById('logout-btn');
 
-                    if (isLoggedIn) {
-                        loginButton.style.display = 'none'; // Hide login button
-                        signupButton.style.display = 'none'; // Hide signup button
-                        logoutButton.style.display = 'inline-block'; // Show logout button
-                    } else {
-                        loginButton.style.display = 'inline-block'; // Show login button
-                        signupButton.style.display = 'inline-block'; // Show signup button
-                        logoutButton.style.display = 'none'; // Hide logout button
+                    // Check if user is logged in (using sessionStorage)
+                    let isLoggedIn = false
+                        
+                    // Update button visibility
+                    function updateButtonVisibility() {
+                        if (isLoggedIn) {
+                            loginButton.style.display = 'none';
+                            signupButton.style.display = 'none';
+                            logoutButton.style.display = 'inline-block';
+                        } else {
+                            loginButton.style.display = 'inline-block';
+                            signupButton.style.display = 'inline-block';
+                            logoutButton.style.display = 'none';
+                        }
                     }
-                }
-                const main = async () => {
-                    const response = await fetch("/pageload");
-                    const json = await response.json()
-                    if (json.result == "success") {
-                        isLoggedIn = true;
+
+                    // Call function on page load
+                    updateButtonVisibility();
+
+                    function logout() {
+                        fetch("/logout")
+                        isLoggedIn = false
                         updateButtonVisibility()
                     }
-                }
-                main()
+                    
+                    logoutButton.addEventListener("click", logout);
+
+                    const main = async () => {
+                        const response = await fetch("/pageload");
+                        const json = await response.json()
+                        if (json.result == "success") {
+                            isLoggedIn = true;
+                            updateButtonVisibility()
+                        }
+                    }
+                    main()
+                });
             </script>
         </div>
     </nav>
