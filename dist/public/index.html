@@ -97,7 +97,7 @@
         }
 
         /* Play Button */
-        #title-screen_button {
+        .title-screen_button {
             font-size: 20px;
             font-weight: bold;
             padding: 12px 24px;
@@ -111,7 +111,7 @@
             transition: 0.3s ease;
         }
 
-        #title-screen_button:hover {
+        .title-screen_button:hover {
             background: #ffcc00;
             color: black;
             text-shadow: 0px 0px 20px rgba(255, 255, 0, 0.8);
@@ -222,7 +222,8 @@
         </div>
         <div id="title-screen" class="ui">
             <h1 id="title-screen_title">EVOLVOEA</h1>
-            <button id="title-screen_button">Play</button>
+            <button id="title-screen_button" class="title-screen_button">Play</button>
+            <a href="/public/home.html"><button class="title-screen_button">Go Back</button></a>
         </div>
         <div id="replay-screen" class="ui">
             <h1 id="replay-screen_title">Game Over</h1>

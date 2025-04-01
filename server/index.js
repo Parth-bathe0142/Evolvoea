@@ -123,21 +123,21 @@ app.get("/leaderboard", async (req, res) => {
         res.json(users);
     } catch (error) {
         console.error("Leaderboard fetch error:", error);
-        res.status(500).json({ result: "Failure", reason: "Internal server error" });
+        res.status(500).json({ result: "failure", reason: "Internal server error" });
     }
 });
 
 app.post("/add-score", async (req, res) => {
     if (!req.session.username) {
-        return res.status(404).json({ result: "failure", reason: "Not logged in" })
+        return res.json({ result: "failure", reason: "Not logged in" })
     }
 
     const score = req.body.score
     const username = req.session.username
-    client = await connectDB();
-    const accounts = client.db('game').collection('user_accounts');
-
     try {
+        client = await connectDB();
+        const accounts = client.db('game').collection('user_accounts');
+
         const user = await accounts.findOneAndUpdate(
             { username },
             { $inc: { score } },
@@ -146,7 +146,7 @@ app.post("/add-score", async (req, res) => {
 
         res.json({ result: "success", newscore: score });
     } catch (error) {
-        res.status(500).json({ result: "Failure", reason: "Internal server error" });
+        res.status(500).json({ result: "failure", reason: "Internal server error" });
     }
 
 })
